@@ -2,6 +2,16 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import AreaProgress from "@/components/AreaProgress";
+import { InputWithText } from "@/components/InputWithText";
+import { SelectBox, SelectBoxItem } from "@tremor/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 const totalProjects = [
   {
@@ -152,7 +162,27 @@ const Home: NextPage = () => {
 
       <main className="flex flex-col h-full">
         <div className="px-10 flex flex-col gap-y-4">
-          <h1>My Progress</h1>
+          <h1 className="text-3xl mb-10 font-bold">progress.me</h1>
+
+          <h4 className="text-xl">Add new progress</h4>
+          <InputWithText
+            label="Progress Name"
+            placeholder="E.g. Weight lifted, courses completed, average daily expense"
+          />
+          <div className="grid w-full items-center gap-1.5">
+            <Label>Track by</Label>
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Month" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="day">Day</SelectItem>
+                <SelectItem value="month">Month</SelectItem>
+                <SelectItem value="year">Year</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <AreaProgress
             colors={["blue"]}
             categoryNames={["My Personal Coding Projects Count"]}
