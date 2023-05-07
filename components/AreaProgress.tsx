@@ -6,27 +6,27 @@ const dataFormatter = (number: number) =>
 
 interface AreaProgressProps {
   chartdata: ChartData[];
-  categoryName: string[];
+  categoryNames: string[];
   colors: ColorOptions;
 }
 
 // eslint-disable-next-line react/display-name
 const AreaProgress = ({
   chartdata,
-  categoryName,
+  categoryNames,
   colors,
 }: AreaProgressProps) => {
   return (
     <Card>
-      <Title>{...categoryName}</Title>
+      <Title>{categoryNames.join(" & ")}</Title>
       <AreaChart
         className=""
         data={chartdata}
         index="month"
-        categories={[...categoryName]}
+        categories={[...categoryNames]}
         colors={[...colors]}
         valueFormatter={dataFormatter}
-        yAxisWidth={40}
+        yAxisWidth={60}
       />
     </Card>
   );

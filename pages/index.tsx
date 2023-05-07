@@ -41,6 +41,34 @@ const dailyExpense = [
   },
 ];
 
+const mySideBusinessIncome = [
+  {
+    month: "Jan 23",
+    "Online Shop": 1004000,
+    Dropshipping: 1020000,
+  },
+  {
+    month: "Feb 23",
+    "Online Shop": 1004000,
+    Dropshipping: 905000,
+  },
+  {
+    month: "Mar 23",
+    "Online Shop": 904000,
+    Dropshipping: 1210500,
+  },
+  {
+    month: "Apr 23",
+    "Online Shop": 804000,
+    Dropshipping: 1032000,
+  },
+  {
+    month: "May 23",
+    "Online Shop": 1204000,
+    Dropshipping: 1230000,
+  },
+];
+
 const screenTime = [
   {
     month: "Feb",
@@ -127,27 +155,32 @@ const Home: NextPage = () => {
           <h1>My Progress</h1>
           <AreaProgress
             colors={["blue"]}
-            categoryName={["My Personal Coding Projects Count"]}
+            categoryNames={["My Personal Coding Projects Count"]}
             chartdata={totalProjects}
           />
           <AreaProgress
             colors={["red"]}
-            categoryName={["My Average Daily Expense"]}
+            categoryNames={["My Average Daily Expense"]}
             chartdata={dailyExpense}
           />
           <AreaProgress
+            colors={["indigo", "cyan"]}
+            categoryNames={["Online Shop", "Dropshipping"]}
+            chartdata={mySideBusinessIncome}
+          />
+          <AreaProgress
             colors={["purple"]}
-            categoryName={["My Weight (kg)"]}
+            categoryNames={["My Weight (kg)"]}
             chartdata={myWeight}
           />
           <AreaProgress
             colors={["orange"]}
-            categoryName={["Total Books Read"]}
+            categoryNames={["Total Books Read"]}
             chartdata={booksRead}
           />
           <AreaProgress
             colors={["cyan"]}
-            categoryName={["My Average Phone Screen Time (hour)"]}
+            categoryNames={["My Average Phone Screen Time (hour)"]}
             chartdata={screenTime}
           />
           <ul className="grid grid-cols-4 gap-3"></ul>
