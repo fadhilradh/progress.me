@@ -6,15 +6,15 @@ import AreaProgress from "@/components/AreaProgress";
 const totalProjects = [
   {
     month: "Feb",
-    "My Personal Coding Projects Count": 1,
-  },
-  {
-    month: "March",
     "My Personal Coding Projects Count": 2,
   },
   {
+    month: "March",
+    "My Personal Coding Projects Count": 4,
+  },
+  {
     month: "April",
-    "My Personal Coding Projects Count": 3,
+    "My Personal Coding Projects Count": 7,
   },
   {
     month: "May",

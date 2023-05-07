@@ -17,16 +17,16 @@ const AreaProgress = ({
   colors,
 }: AreaProgressProps) => {
   return (
-    <Card>
+    <Card className="bg-slate-100 rounded-xl">
       <Title>{categoryNames.join(" & ")}</Title>
       <AreaChart
-        className=""
         data={chartdata}
         index="month"
         categories={[...categoryNames]}
         colors={[...colors]}
         valueFormatter={dataFormatter}
         yAxisWidth={60}
+        curveType="linear"
       />
     </Card>
   );
