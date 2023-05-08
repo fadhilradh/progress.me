@@ -1,4 +1,4 @@
-export type ChartData = Record<string, unknown>;
+export type ChartData = Record<string, number>;
 
 export type ColorOptions = (
   | "blue"

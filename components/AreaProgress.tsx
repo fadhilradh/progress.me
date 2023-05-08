@@ -8,6 +8,8 @@ interface AreaProgressProps {
   chartdata: ChartData[];
   categoryNames: string[];
   colors: ColorOptions;
+  idx?: string;
+  maxValue?: number;
 }
 
 // eslint-disable-next-line react/display-name
@@ -15,18 +17,22 @@ const AreaProgress = ({
   chartdata,
   categoryNames,
   colors,
+  idx = "month",
+  maxValue,
 }: AreaProgressProps) => {
   return (
     <Card className="bg-slate-100 rounded-xl">
       <Title>{categoryNames.join(" & ")}</Title>
       <AreaChart
         data={chartdata}
-        index="month"
+        index={idx}
         categories={[...categoryNames]}
         colors={[...colors]}
         valueFormatter={dataFormatter}
         yAxisWidth={60}
         curveType="linear"
+        maxValue={maxValue}
+        className="h-[500px]"
       />
     </Card>
   );
