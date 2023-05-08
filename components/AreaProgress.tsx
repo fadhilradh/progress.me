@@ -7,7 +7,7 @@ const dataFormatter = (number: number) =>
 interface AreaProgressProps {
   chartdata: ChartData[];
   categoryNames: string[];
-  colors: ColorOptions;
+  colors: any;
   idx?: string;
   maxValue?: number;
 }

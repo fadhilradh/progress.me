@@ -20,47 +20,47 @@ export const totalProjects = [
 export const dailyExpense = [
   {
     month: "Feb",
-    "My Average Daily Expense": 50000,
+    "Average Daily Food Expense (IDR)": 50000,
   },
   {
     month: "March",
-    "My Average Daily Expense": 40000,
+    "Average Daily Food Expense (IDR)": 40000,
   },
   {
     month: "April",
-    "My Average Daily Expense": 20000,
+    "Average Daily Food Expense (IDR)": 20000,
   },
   {
     month: "May",
-    "My Average Daily Expense": 15000,
+    "Average Daily Food Expense (IDR)": 15000,
   },
 ];
 
 export const mySideBusinessIncome = [
   {
     month: "Jan 23",
-    "Online Shop": 1004000,
-    Dropshipping: 1020000,
+    "Online Shop (IDR)": 1004000,
+    "Dropshipping (IDR)": 1020000,
   },
   {
     month: "Feb 23",
-    "Online Shop": 1004000,
-    Dropshipping: 905000,
+    "Online Shop (IDR)": 1004000,
+    "Dropshipping (IDR)": 905000,
   },
   {
     month: "Mar 23",
-    "Online Shop": 904000,
-    Dropshipping: 1210500,
+    "Online Shop (IDR)": 904000,
+    "Dropshipping (IDR)": 1210500,
   },
   {
     month: "Apr 23",
-    "Online Shop": 804000,
-    Dropshipping: 1032000,
+    "Online Shop (IDR)": 804000,
+    "Dropshipping (IDR)": 1032000,
   },
   {
     month: "May 23",
-    "Online Shop": 1204000,
-    Dropshipping: 1230000,
+    "Online Shop (IDR)": 1204000,
+    "Dropshipping (IDR)": 1230000,
   },
 ];
 
@@ -113,18 +113,18 @@ export const booksRead = [
   },
   {
     month: "February",
-    "Total Books Read": 2,
-  },
-  {
-    month: "March",
     "Total Books Read": 3,
   },
   {
+    month: "March",
+    "Total Books Read": 5,
+  },
+  {
     month: "April",
-    "Total Books Read": 4,
+    "Total Books Read": 6,
   },
   {
     month: "May",
-    "Total Books Read": 5,
+    "Total Books Read": 8,
   },
 ];

@@ -8,6 +8,7 @@ interface InputWithTextProps {
   text?: string;
   value?: string;
   onChange?: Dispatch<SetStateAction<string>>;
+  disabled?: boolean;
 }
 
 export function InputWithText({
@@ -16,6 +17,7 @@ export function InputWithText({
   text,
   value,
   onChange,
+  disabled,
 }: InputWithTextProps) {
   return (
     <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -26,6 +28,7 @@ export function InputWithText({
         type="text"
         id={label}
         placeholder={placeholder}
+        disabled={disabled}
       />
       <p className="text-sm text-muted-foreground">{text}</p>
     </div>
