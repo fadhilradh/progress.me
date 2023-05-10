@@ -28,7 +28,7 @@ const ProgressApp = () => {
     [chartColor, setChartColor] = useState<ColorOptions | "">(""),
     rangeData = useWatch({ control, name: "range" }),
     [progressName, setProgressName] = useState<string>(""),
-    [progressValue, setProgressValue] = useState<any>(""),
+    [progressValue, setProgressValue] = useState<number>(),
     [selectedRange, setSelectedRange] = useState<string>(""),
     [chartData, setChartData] = useState<ChartData[]>([]),
     [maxValue, setMaxValue] = useState<number>(0),
@@ -47,7 +47,7 @@ const ProgressApp = () => {
     };
     setChartData([...chartData, newData]);
     setValue("range", "Select");
-    setProgressValue("");
+    setProgressValue(0);
     const maxValue = Math.max(...chartData.map((data) => data[progressName]));
     setMaxValue(maxValue);
     setIsCreatingChart(true);
@@ -149,7 +149,11 @@ const ProgressApp = () => {
             </SelectContent>
           </Select>
         </div>
-        <Button variant="secondary" onClick={addProgress}>
+        <Button
+          disabled={chartData.length === 0}
+          variant="secondary"
+          onClick={addProgress}
+        >
           Add Data
         </Button>
         <Button

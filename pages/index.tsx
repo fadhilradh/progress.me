@@ -20,11 +20,11 @@ const Home: NextPage = () => {
         <div className="px-10 pb-10 flex flex-col gap-y-4">
           <div className="flex justify-between items-center py-5">
             <h1 className="text-3xl  font-bold">↗ progress.me</h1>
-            <ProgressApp />
             <Button variant="outline">
               <p className="text-lg">Login</p>
             </Button>
           </div>
+          <ProgressApp />
         </div>
       </main>
     </div>

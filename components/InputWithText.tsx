@@ -3,11 +3,11 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 interface InputWithTextProps {
-  label?: string;
+  label?: string | number;
   placeholder: string;
   text?: string;
-  value?: string;
-  onChange?: Dispatch<SetStateAction<string>>;
+  value?: string | number;
+  onChange?: Dispatch<SetStateAction<any>>;
   disabled?: boolean;
 }
 
@@ -21,12 +21,12 @@ export function InputWithText({
 }: InputWithTextProps) {
   return (
     <div className="grid w-full max-w-sm items-center gap-1.5">
-      <Label htmlFor={label}>{label}</Label>
+      <Label htmlFor={String(label)}>{label}</Label>
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         type="text"
-        id={label}
+        id={String(label)}
         placeholder={placeholder}
         disabled={disabled}
       />
