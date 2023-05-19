@@ -1,4 +1,8 @@
 export type ChartData = Record<string, number>;
+export interface ProgressChart {
+  id?: string | null;
+  data: ChartData[];
+}
 
 export type Chart = ChartData[];
 

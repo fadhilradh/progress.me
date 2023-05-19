@@ -21,7 +21,7 @@ const AreaProgress = ({
   maxValue,
 }: AreaProgressProps) => {
   return (
-    <Card className="bg-slate-100 rounded-xl">
+    <Card className="shadow-xl rounded-xl">
       <Title>{categoryNames.join(" & ")}</Title>
       <AreaChart
         data={chartdata}
