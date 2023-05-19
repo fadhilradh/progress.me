@@ -11,6 +11,8 @@ import {
 } from "redux-persist";
 import userReducer from "./user";
 import storage from "redux-persist/lib/storage";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+
 
 const persistConfig = {
   key: "root",
@@ -40,3 +42,6 @@ export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
 
 export type AppDispatch = typeof store.dispatch;
+
+export const useTypedDispatch: () => AppDispatch = useDispatch;
+export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;

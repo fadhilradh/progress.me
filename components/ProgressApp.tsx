@@ -20,6 +20,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { api } from "@/lib/axios";
 import { serializeProgressReq } from "@/lib/utils";
+import { useTypedSelector } from "@/store/store";
 
 const rangeMapping: Record<string, any> = {
   month: MONTHS,
@@ -39,7 +40,9 @@ const ProgressApp = () => {
       data: [],
     }),
     [maxValue, setMaxValue] = useState<number>(0),
-    [isCreatingChart, setIsCreatingChart] = useState<boolean>(false);
+    [isCreatingChart, setIsCreatingChart] = useState<boolean>(false),
+    user = useTypedSelector((state) => state.user),
+    [userCharts, setUserCharts] = useState([]);
 
   function addChart() {
     try {
@@ -52,9 +55,18 @@ const ProgressApp = () => {
     }
   }
 
+  async function getUserCharts() {
+      try {
+       const res = await api.get(`/chart-progresses/${user.userId}`);
+        setUserCharts(res.data);
+      } catch (e) {
+        console.error(e);
+      }
+  }
+
   React.useEffect(() => {
-    console.log(chartData);
-  }, [chartData]);
+    getUserCharts()
+  }, []);
 
   function addProgress() {
     const newData = {
@@ -75,8 +87,10 @@ const ProgressApp = () => {
 
   return (
     <Grid className="gap-5" numCols={1} numColsLg={2}>
-      <PlaceholderCharts />
-      <section className="p-4 rounded-xl border border-primary-foreground grid gap-y-5">
+      <h2>Your Charts :</h2>
+
+      {/* <PlaceholderCharts /> */}
+      <section className="border border-gray-300 shadow-xl p-4 rounded-xl grid gap-y-5">
         <h4 className="text-2xl ">Add New Progress Chart</h4>
         <div className="flex justify-between items-center">
           <InputWithText

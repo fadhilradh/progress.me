@@ -1,9 +1,6 @@
 lockfileVersion: '6.0'
 
 dependencies:
-  '@next/font':
-    specifier: ^13.4.3
-    version: 13.4.3
   '@radix-ui/react-label':
     specifier: ^2.0.1
     version: 2.0.1(react-dom@18.2.0)(react@18.2.0)
@@ -254,10 +251,6 @@ packages:
     dependencies:
       glob: 7.1.7
     dev: true
-
-  /@next/font@13.4.3:
-    resolution: {integrity: sha512-plrCwj4s9fjjcMdkAo+MAVkKuSemRz6XLcow6RdkesEfNyfSD8eMU9+rR3khrXnCZ9zjsf9mcPG5ubvqDXU0mg==}
-    dev: false
 
   /@next/swc-darwin-arm64@13.4.0:
     resolution: {integrity: sha512-C39AGL3ANXA+P3cFclQjFZaJ4RHPmuBhskmyy0N3VyCntDmRrNkS4aXeNY4Xwure9IL1nuw02D8bM55I+FsbuQ==}

@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "@/store/store";
-import { Inter as FontSans } from "@next/font/google";
+import { Inter as FontSans } from "next/font/google";
 
 const fontSans = FontSans({
   subsets: ["latin"],

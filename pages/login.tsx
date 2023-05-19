@@ -19,13 +19,14 @@ const Login = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = useState({ message: "" });
   const router = useRouter();
+
   async function onFormSubmit(data: any) {
     try {
       setError({ message: "" });
       setIsLoading(true);
       const userData = await api.post("/login", data);
       reset();
-      dispatch(login(userData));
+      dispatch(login(userData.data));
       router.replace("/");
     } catch (error) {
       console.log(error);
@@ -37,7 +38,7 @@ const Login = () => {
   return (
     <>
       <div className="flex flex-col items-center justify-center pt-20">
-        <h1 className="bg-gradient-to-r from-blue-600 to-green-300 bg-clip-text text-4xl font-bold text-transparent">
+        <h1 className="bg-gradient-to-r pb-2 from-blue-600 to-green-300 bg-clip-text text-4xl font-bold text-transparent">
           Login
         </h1>
         <form
@@ -45,7 +46,7 @@ const Login = () => {
           className="flex w-full flex-col items-center justify-center gap-4 px-4 pt-10 sm:w-1/2"
         >
           <div className="flex flex-col gap-y-1">
-            <label className="text-sm" htmlFor="email">
+            <label className="text-sm " htmlFor="email">
               Username
             </label>
             <Input
@@ -56,7 +57,7 @@ const Login = () => {
             />
           </div>
           <div className="flex flex-col gap-y-1">
-            <label className="text-sm" htmlFor="password">
+            <label className="text-sm " htmlFor="password">
               Password
             </label>
             <Input
