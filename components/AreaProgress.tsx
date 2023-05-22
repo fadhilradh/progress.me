@@ -15,14 +15,14 @@ interface AreaProgressProps {
 // eslint-disable-next-line react/display-name
 const AreaProgress = ({
   chartdata,
-  categoryNames,
-  colors,
-  idx = "month",
+  categoryNames = [],
+  colors = [],
+  idx = "monthly",
   maxValue,
 }: AreaProgressProps) => {
   return (
     <Card className="shadow-xl rounded-xl">
-      <Title>{categoryNames.join(" & ")}</Title>
+      <Title>{categoryNames?.join(" & ")}</Title>
       <AreaChart
         data={chartdata}
         index={idx}

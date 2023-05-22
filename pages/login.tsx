@@ -27,7 +27,7 @@ const Login = () => {
       const userData = await api.post("/login", data);
       reset();
       dispatch(login(userData.data));
-      router.replace("/");
+      // router.replace("/");
     } catch (error) {
       console.log(error);
       setError({ message: error.response.data.message });

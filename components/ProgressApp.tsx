@@ -16,11 +16,11 @@ import { Button } from "./ui/button";
 import { RotateCcw } from "lucide-react";
 import { chartColors, ChartData, ProgressChart } from "@/types/tremor";
 import { MONTHS, WEEKS, YEARS } from "@/data/time";
-import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { api } from "@/lib/axios";
-import { serializeProgressReq } from "@/lib/utils";
+import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
 import { useTypedSelector } from "@/store/store";
+import { ChartsWithProgressResponse } from "@/types/api";
 
 const rangeMapping: Record<string, any> = {
   month: MONTHS,
@@ -42,7 +42,8 @@ const ProgressApp = () => {
     [maxValue, setMaxValue] = useState<number>(0),
     [isCreatingChart, setIsCreatingChart] = useState<boolean>(false),
     user = useTypedSelector((state) => state.user),
-    [userCharts, setUserCharts] = useState([]);
+    [userCharts, setUserCharts] = useState([]),
+    [userRawCharts, setUserRawCharts] = useState<ChartsWithProgressResponse[] | []>([]);
 
   function addChart() {
     try {
@@ -58,7 +59,8 @@ const ProgressApp = () => {
   async function getUserCharts() {
       try {
        const res = await api.get(`/chart-progresses/${user.userId}`);
-        setUserCharts(res.data);
+       setUserRawCharts(res.data);
+       setUserCharts(serializeProgressRes(res.data));
       } catch (e) {
         console.error(e);
       }
@@ -66,7 +68,8 @@ const ProgressApp = () => {
 
   React.useEffect(() => {
     getUserCharts()
-  }, []);
+    console.log(userCharts)
+  }, [userCharts?.length]);
 
   function addProgress() {
     const newData = {
@@ -88,9 +91,21 @@ const ProgressApp = () => {
   return (
     <Grid className="gap-5" numCols={1} numColsLg={2}>
       <h2>Your Charts :</h2>
-
+      {
+        userCharts?.map((chart: any, idx : number) => {
+          return (
+              <AreaProgress
+              key={userRawCharts[idx].chart_id}
+                chartdata={userCharts[idx]}
+                colors={["blue"]}
+                idx={userRawCharts[idx].range_type}
+                categoryNames={[userRawCharts[idx].progress_name]}
+              />
+          )
+        })
+      }
       {/* <PlaceholderCharts /> */}
-      <section className="border border-gray-300 shadow-xl p-4 rounded-xl grid gap-y-5">
+      <section className="border border-gray-300 shadow-xl p-6 rounded-xl grid gap-y-5">
         <h4 className="text-2xl ">Add New Progress Chart</h4>
         <div className="flex justify-between items-center">
           <InputWithText
