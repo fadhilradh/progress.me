@@ -97,7 +97,7 @@ const ProgressApp = () => {
               <AreaProgress
               key={userRawCharts[idx].chart_id}
                 chartdata={userCharts[idx]}
-                colors={["blue"]}
+                colors={[userRawCharts[idx].chart_color]}
                 idx={userRawCharts[idx].range_type}
                 categoryNames={[userRawCharts[idx].progress_name]}
               />

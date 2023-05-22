@@ -5,7 +5,7 @@ export interface ChartsWithProgressResponse {
     range_type: string
     progress_name: string
     progress_data: ProgressData[]
-
+    chart_color: string
 }
 
 export interface ProgressData {
