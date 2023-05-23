@@ -12,4 +12,5 @@ export interface ProgressData {
     progress_id : UUID;
     progress_value: number;
     range_value: string;
+    progress_no : number;
 }

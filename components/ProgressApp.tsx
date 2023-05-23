@@ -16,16 +16,15 @@ import { Button } from "./ui/button";
 import { RotateCcw } from "lucide-react";
 import { chartColors, ChartData, ProgressChart } from "@/types/tremor";
 import { MONTHS, WEEKS, YEARS } from "@/data/time";
-import { v4 as uuidv4 } from "uuid";
 import { api } from "@/lib/axios";
 import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
 import { useTypedSelector } from "@/store/store";
 import { ChartsWithProgressResponse } from "@/types/api";
 
 const rangeMapping: Record<string, any> = {
-  month: MONTHS,
-  year: YEARS,
-  week: WEEKS,
+  monthly: MONTHS,
+  yearly: YEARS,
+  weekly: WEEKS,
 };
 
 const ProgressApp = () => {
@@ -42,33 +41,54 @@ const ProgressApp = () => {
     [maxValue, setMaxValue] = useState<number>(0),
     [isCreatingChart, setIsCreatingChart] = useState<boolean>(false),
     user = useTypedSelector((state) => state.user),
-    [userCharts, setUserCharts] = useState([]),
-    [userRawCharts, setUserRawCharts] = useState<ChartsWithProgressResponse[] | []>([]);
+    [userCharts, setUserCharts] = useState<ChartData[][]>([]),
+    [userRawCharts, setUserRawCharts] = useState<
+      ChartsWithProgressResponse[] | []
+    >([]);
 
   function addChart() {
     try {
-      api.post("/progress", {
-        id: uuidv4(),
-        data: serializeProgressReq(chartData.data),
+      api.post("/chart-progresses", {
+        user_id: user.userId,
+        progress_data: serializeProgressReq(chartData.data),
+        progress_name: progressName,
+        range_type: selectedRange,
+        chart_color: chartColor,
       });
+      getUserCharts();
+      resetNewChart();
     } catch (error) {
       alert(error);
     }
   }
 
+  function resetNewChart() {
+    setValue("range", "Select");
+    setProgressValue(0);
+    setIsCreatingChart(false);
+    setChartData({ id: null, data: [] });
+    setProgressName("");
+    setValue("range", "");
+    setSelectedRange("");
+  }
+
   async function getUserCharts() {
-      try {
-       const res = await api.get(`/chart-progresses/${user.userId}`);
-       setUserRawCharts(res.data);
-       setUserCharts(serializeProgressRes(res.data));
-      } catch (e) {
-        console.error(e);
-      }
+    try {
+      const res = await api.get(`/chart-progresses/${user.userId}`);
+      setUserRawCharts(res.data);
+      setUserCharts(serializeProgressRes(res.data));
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   React.useEffect(() => {
-    getUserCharts()
-    console.log(userCharts)
+    console.log(chartData);
+  }, [chartData?.data?.length]);
+
+  React.useEffect(() => {
+    getUserCharts();
+    console.log(userCharts);
   }, [userCharts?.length]);
 
   function addProgress() {
@@ -79,11 +99,12 @@ const ProgressApp = () => {
     setChartData({
       data: !chartData ? [newData] : [...chartData?.data, newData],
     });
+
+    const maxValue = Math.max(
+      Number(...chartData?.data.map((data) => data[progressName]))
+    );
     setValue("range", "Select");
     setProgressValue(0);
-    const maxValue = Math.max(
-      ...chartData?.data.map((data) => data[progressName])
-    );
     setMaxValue(maxValue);
     setIsCreatingChart(true);
   }
@@ -91,19 +112,19 @@ const ProgressApp = () => {
   return (
     <Grid className="gap-5" numCols={1} numColsLg={2}>
       <h2>Your Charts :</h2>
-      {
-        userCharts?.map((chart: any, idx : number) => {
-          return (
-              <AreaProgress
-              key={userRawCharts[idx].chart_id}
-                chartdata={userCharts[idx]}
-                colors={[userRawCharts[idx].chart_color]}
-                idx={userRawCharts[idx].range_type}
-                categoryNames={[userRawCharts[idx].progress_name]}
-              />
-          )
-        })
-      }
+      {userCharts?.map((chart: any, idx: number) => {
+        return (
+          <AreaProgress
+            key={userRawCharts[idx].chart_id}
+            chartdata={userCharts[idx].sort(
+              (a, b) => Number(a.progress_no) - Number(b.progress_no)
+            )}
+            colors={[userRawCharts[idx].chart_color]}
+            idx={userRawCharts[idx].range_type}
+            categoryNames={[userRawCharts[idx].progress_name]}
+          />
+        );
+      })}
       {/* <PlaceholderCharts /> */}
       <section className="border border-gray-300 shadow-xl p-6 rounded-xl grid gap-y-5">
         <h4 className="text-2xl ">Add New Progress Chart</h4>
@@ -116,17 +137,7 @@ const ProgressApp = () => {
             placeholder="E.g. Weight lifted, courses completed, average daily expense"
           />
           {isCreatingChart && (
-            <Button
-              onClick={() => {
-                setIsCreatingChart(false);
-                setChartData({ id: null, data: [] });
-                setProgressName("");
-                setValue("range", "");
-                setSelectedRange("");
-              }}
-              title="Reset data"
-              variant="ghost"
-            >
+            <Button onClick={resetNewChart} title="Reset data" variant="ghost">
               <RotateCcw />
             </Button>
           )}
@@ -143,9 +154,9 @@ const ProgressApp = () => {
             </SelectTrigger>
             <SelectContent>
               {/* <SelectItem value="date">Date</SelectItem> */}
-              <SelectItem value="week">Weekly</SelectItem>
-              <SelectItem value="month">Monthly</SelectItem>
-              <SelectItem value="year">Yearly</SelectItem>
+              <SelectItem value="weekly">Weekly</SelectItem>
+              <SelectItem value="monthly">Monthly</SelectItem>
+              <SelectItem value="yearly">Yearly</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -167,7 +178,7 @@ const ProgressApp = () => {
 
         {selectedRange && (
           <section className="flex flex-col gap-y-3">
-            <Label className="text-xl my-3">Input progress data :</Label>
+            <Label className="text-xl my-3">Add progress :</Label>
             <Label className="capitalize -mb-1">{selectedRange}</Label>
             <Controller
               control={control}
@@ -207,14 +218,14 @@ const ProgressApp = () => {
           variant="secondary"
           onClick={addProgress}
         >
-          Add Data
+          Add Progress
         </Button>
         <Button
           disabled={chartData?.data?.length < 2}
           variant="outline"
           onClick={addChart}
         >
-          Add Progress Chart
+          Save Chart
         </Button>
       </section>
       <AreaProgress
