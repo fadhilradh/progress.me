@@ -1,13 +1,4 @@
 export type ChartData = Record<string, number | string>;
-export type ChartDataWithLabel = Record<
-  string,
-  number | string | { label: string }
->;
-
-export interface ProgressChart {
-  id?: string | null;
-  data: ChartDataWithLabel[];
-}
 
 export interface Range {
   label: string;

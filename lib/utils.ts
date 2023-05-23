@@ -1,4 +1,3 @@
-import { ChartDataWithLabel } from "@/types/chart";
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ChartsWithProgressResponse } from "@/types/api";
@@ -7,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function serializeProgressReq(data: ChartDataWithLabel[]) {
+export function serializeProgressReq(data: ChartData[]) {
   const ranges = ["daily", "weekly", "monthly", "yearly"],
     firstData = Object.keys(data[0]),
     rangeTypeIdx = firstData.findIndex((d) => ranges.indexOf(d) !== -1),

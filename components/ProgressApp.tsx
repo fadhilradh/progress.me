@@ -14,7 +14,7 @@ import { Label } from "./ui/label";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Button } from "./ui/button";
 import { RotateCcw } from "lucide-react";
-import { chartColors, ChartData, ProgressChart, Range } from "@/types/chart";
+import { chartColors, ChartData, Range } from "@/types/chart";
 import { MONTHS, WEEKS, YEARS } from "@/data/time";
 import { api } from "@/lib/axios";
 import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
@@ -31,12 +31,9 @@ const ProgressApp = () => {
   const { register, handleSubmit, control, getValues, setValue } = useForm(),
     [chartColor, setChartColor] = useState<string>(""),
     [progressName, setProgressName] = useState<string>(""),
-    [progressValue, setProgressValue] = useState<number | null>(),
+    [progressValue, setProgressValue] = useState<number | "">(),
     [selectedRange, setSelectedRange] = useState<string>(""),
-    [chartData, setChartData] = useState<ProgressChart>({
-      id: null,
-      data: [],
-    }),
+    [chartData, setChartData] = useState<ChartData[]>([]),
     [maxValue, setMaxValue] = useState<number>(0),
     [isCreatingChart, setIsCreatingChart] = useState<boolean>(false),
     user = useTypedSelector((state) => state.user),
@@ -52,7 +49,7 @@ const ProgressApp = () => {
     try {
       api.post("/chart-progresses", {
         user_id: user.userId,
-        progress_data: serializeProgressReq(chartData.data),
+        progress_data: serializeProgressReq(chartData),
         progress_name: progressName,
         range_type: selectedRange,
         chart_color: chartColor,
@@ -68,7 +65,7 @@ const ProgressApp = () => {
     setValue("range", "Select");
     setProgressValue(0);
     setIsCreatingChart(false);
-    setChartData({ id: null, data: [] });
+    setChartData([]);
     setProgressName("");
     setValue("range", "");
     setSelectedRange("");
@@ -89,18 +86,14 @@ const ProgressApp = () => {
   }
 
   React.useEffect(() => {
-    console.log(
-      "🚀 ~ file: ProgressApp.tsx:91 ~ ProgressApp ~ chartData:",
-      chartData
-    );
-  }, [chartData?.data.length]);
+    console.log("chartdata:", chartData);
+  }, [chartData.length]);
 
   React.useEffect(() => {
     setFilteredRange(rangeMapping?.[selectedRange]);
   }, [selectedRange]);
 
   React.useEffect(() => {
-    console.log("I am running");
     setFilteredRange(
       rangeMapping[selectedRange]?.filter(
         (r: Range) => !rangeVals?.includes(r?.value)
@@ -119,21 +112,28 @@ const ProgressApp = () => {
       progress_no: rangeVal.value,
       [progressName]: progressValue,
     };
-    setChartData({
-      data: !chartData
+    setChartData(
+      chartData.length === 0
         ? [newData]
-        : [...chartData?.data, newData].sort(
+        : [...chartData, newData].sort(
             (a, b) => Number(a.progress_no) - Number(b.progress_no)
-          ),
-    });
-    setRangeVals([...rangeVals, rangeVal.value]);
-    const maxValue = Math.max(
-      Number(...chartData?.data.map((data) => data[progressName]))
+          )
     );
+    setRangeVals([...rangeVals, rangeVal.value]);
+
     setRangeVal({ label: "", value: 0 });
-    setProgressValue(null);
-    setMaxValue(maxValue);
+    setProgressValue("");
     setIsCreatingChart(true);
+    setTimeout(() => {
+      const maxval = Math.max(
+        ...[
+          ...chartData?.map((data) => Number(data[progressName])),
+          Number(progressValue),
+        ]
+      );
+      console.log("max:", maxval);
+      setMaxValue(maxval);
+    }, 500);
     setRangeVals([...rangeVals, rangeVal.value]);
   }
 
@@ -261,7 +261,7 @@ const ProgressApp = () => {
         <AreaProgress
           colors={[chartColor]}
           categoryNames={[progressName]}
-          chartdata={chartData?.data}
+          chartdata={chartData}
           idx={selectedRange}
           maxValue={maxValue}
         />
