@@ -1,4 +1,4 @@
-export type ChartData = Record<string, number | string>;
+export type ChartData = Record<string, string | number>;
 
 export interface Range {
   label: string;

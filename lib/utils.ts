@@ -1,6 +1,7 @@
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ChartsWithProgressResponse } from "@/types/api";
+import { ChartData } from "@/types/chart";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

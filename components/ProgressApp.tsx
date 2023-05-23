@@ -113,6 +113,7 @@ const ProgressApp = () => {
       [progressName]: progressValue,
     };
     setChartData(
+      // @ts-ignore-next-line
       chartData.length === 0
         ? [newData]
         : [...chartData, newData].sort(
@@ -212,7 +213,7 @@ const ProgressApp = () => {
             </Label>
 
             <Select
-              onValueChange={(v) => updateSelectedRanges(v)}
+              onValueChange={(v: Range) => updateSelectedRanges(v)}
               value={rangeVal}
             >
               <SelectTrigger className="w-[180px]">
@@ -247,7 +248,7 @@ const ProgressApp = () => {
           Add Progress
         </Button>
         <Button
-          disabled={chartData?.data?.length < 2}
+          disabled={chartData?.length < 2}
           variant="outline"
           onClick={addChart}
         >
