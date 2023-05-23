@@ -1,0 +1,26 @@
+import { ChartColorOptions } from "@/types/chart";
+
+export const chartColors: ChartColorOptions[] = [
+  "blue",
+  "red",
+  "purple",
+  "orange",
+  "slate",
+  "gray",
+  "zinc",
+  "neutral",
+  "stone",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "indigo",
+  "violet",
+  "fuchsia",
+  "pink",
+  "rose",
+];

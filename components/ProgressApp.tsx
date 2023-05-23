@@ -9,17 +9,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import PlaceholderCharts from "./PlaceholderCharts";
 import { Label } from "./ui/label";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { RotateCcw } from "lucide-react";
-import { chartColors, ChartData, Range } from "@/types/chart";
+import { ChartData, ChartColorOptions, Range } from "@/types/chart";
 import { MONTHS, WEEKS, YEARS } from "@/data/time";
 import { api } from "@/lib/axios";
 import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
 import { useTypedSelector } from "@/store/store";
 import { ChartsWithProgressResponse } from "@/types/api";
+import { chartColors } from "@/data/chart";
 
 const rangeMapping: Record<string, Range[]> = {
   monthly: MONTHS,
@@ -28,8 +28,8 @@ const rangeMapping: Record<string, Range[]> = {
 };
 
 const ProgressApp = () => {
-  const { register, handleSubmit, control, getValues, setValue } = useForm(),
-    [chartColor, setChartColor] = useState<string>(""),
+  const { register, setValue } = useForm(),
+    [selectedColors, setChartColor] = useState<ChartColorOptions[]>(["blue"]),
     [progressName, setProgressName] = useState<string>(""),
     [progressValue, setProgressValue] = useState<number | "">(),
     [selectedRange, setSelectedRange] = useState<string>(""),
@@ -52,7 +52,8 @@ const ProgressApp = () => {
         progress_data: serializeProgressReq(chartData),
         progress_name: progressName,
         range_type: selectedRange,
-        chart_color: chartColor,
+        // TODO-not priority: support multiple colors
+        chart_color: selectedColors[0],
       });
       getUserCharts();
       resetNewChart();
@@ -79,10 +80,6 @@ const ProgressApp = () => {
     } catch (e) {
       console.error(e);
     }
-  }
-
-  function updateSelectedRanges(v: Range) {
-    setRangeVal(v);
   }
 
   React.useEffect(() => {
@@ -187,6 +184,7 @@ const ProgressApp = () => {
                 <SelectValue placeholder={selectedRange} />
               </SelectTrigger>
               <SelectContent>
+                {/* TODO : support date */}
                 {/* <SelectItem value="date">Date</SelectItem> */}
                 <SelectItem value="weekly">Weekly</SelectItem>
                 <SelectItem value="monthly">Monthly</SelectItem>
@@ -196,12 +194,15 @@ const ProgressApp = () => {
           </div>
           <div className="grid w-full items-center gap-1.5 ">
             <Label>Chart Color</Label>
-            <Select onValueChange={setChartColor} value={chartColor}>
+            <Select
+              onValueChange={(e) => setChartColor([e])}
+              value={selectedColors[0]}
+            >
               <SelectTrigger className="w-[180px] capitalize">
                 <SelectValue placeholder="Your favorite chart color" />
               </SelectTrigger>
               <SelectContent>
-                {chartColors?.map((color: any) => (
+                {chartColors?.map((color: ChartColorOptions) => (
                   <SelectItem className="capitalize" key={color} value={color}>
                     {color}
                   </SelectItem>
@@ -216,7 +217,7 @@ const ProgressApp = () => {
                 {selectedRange.substring(0, selectedRange.length - 2)}
               </Label>
               <Select
-                onValueChange={(v: Range) => updateSelectedRanges(v)}
+                onValueChange={(v: Range) => setRangeVal(v)}
                 value={rangeVal}
               >
                 <SelectTrigger className="w-[180px]">
@@ -262,7 +263,7 @@ const ProgressApp = () => {
             <p className="text-lg font-semibold my-2">Chart Preview</p>
           </div>
           <AreaChart
-            colors={[chartColor]}
+            colors={selectedColors}
             categories={[progressName]}
             data={chartData}
             index={selectedRange}
