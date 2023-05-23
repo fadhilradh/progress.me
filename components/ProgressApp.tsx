@@ -83,10 +83,6 @@ const ProgressApp = () => {
   }
 
   React.useEffect(() => {
-    console.log("chartdata:", chartData);
-  }, [chartData.length]);
-
-  React.useEffect(() => {
     setFilteredRange(rangeMapping?.[selectedRange]);
   }, [selectedRange]);
 
@@ -117,7 +113,6 @@ const ProgressApp = () => {
           )
     );
     setRangeVals([...rangeVals, rangeVal.value]);
-
     setRangeVal({ label: "", value: 0 });
     setProgressValue("");
     setIsCreatingChart(true);
@@ -152,9 +147,9 @@ const ProgressApp = () => {
           );
         })}
       </Grid>
-      <Grid className="gap-5" numCols={1} numColsLg={2}>
-        <section className="grid gap-5 border border-gray-300 shadow-xl p-6 rounded-xl ">
-          <h4 className="text-2xl ">Add New Chart</h4>
+      <Grid className="gap-3 sm:gap-5" numCols={1} numColsLg={2}>
+        <section className="grid gap-3 sm:gap-5 border border-gray-300 shadow-xl p-6 rounded-xl ">
+          <h4 className="text-2xl mb-2">Add New Chart</h4>
           <div className="flex justify-between items-center">
             <InputWithText
               disabled={isCreatingChart}
@@ -212,7 +207,7 @@ const ProgressApp = () => {
           </div>
           {selectedRange && (
             <section className="flex flex-col gap-y-3">
-              <Label className="text-xl my-3">Add Progress</Label>
+              <Label className="text-xl my-3 underline">Add Progress</Label>
               <Label className="capitalize -mb-1">
                 {selectedRange.substring(0, selectedRange.length - 2)}
               </Label>
@@ -236,10 +231,11 @@ const ProgressApp = () => {
                 </SelectContent>
               </Select>
               <InputWithText
+                type="number"
                 value={progressValue}
                 onChange={setProgressValue}
                 label={progressName}
-                placeholder="Your progress value"
+                placeholder="Your progress (in numbers)"
               />
             </section>
           )}

@@ -1,4 +1,9 @@
-import { ChangeEventHandler, Dispatch, SetStateAction } from "react";
+import {
+  ChangeEventHandler,
+  Dispatch,
+  HTMLInputTypeAttribute,
+  SetStateAction,
+} from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
@@ -9,6 +14,7 @@ interface InputWithTextProps {
   value?: string | number;
   onChange?: Dispatch<SetStateAction<any>>;
   disabled?: boolean;
+  type?: HTMLInputTypeAttribute;
 }
 
 export function InputWithText({
@@ -18,6 +24,7 @@ export function InputWithText({
   value,
   onChange,
   disabled,
+  type = "text",
 }: InputWithTextProps) {
   return (
     <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -27,7 +34,7 @@ export function InputWithText({
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        type="text"
+        type={type}
         id={String(label)}
         placeholder={placeholder}
         disabled={disabled}

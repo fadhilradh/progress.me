@@ -1,4 +1,4 @@
-import { ChartData, ColorOptions } from "@/types/chart";
+import { ChartData } from "@/types/chart";
 import { Card, Title, AreaChart } from "@tremor/react";
 
 const dataFormatter = (number: number) =>
@@ -21,7 +21,7 @@ const AreaProgress = ({
   maxValue,
 }: AreaProgressProps) => {
   return (
-    <Card className="shadow-xl rounded-xl">
+    <Card className="shadow-xl rounded-xl p-4 sm:p-6">
       <Title>{categoryNames?.join(" & ")}</Title>
       <AreaChart
         data={chartdata}
@@ -29,7 +29,6 @@ const AreaProgress = ({
         categories={[...categoryNames]}
         colors={[...colors]}
         valueFormatter={dataFormatter}
-        yAxisWidth={60}
         curveType="linear"
         maxValue={maxValue}
         className=""

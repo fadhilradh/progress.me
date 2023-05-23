@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   const user = useTypedSelector((state) => state.user);
 
   return (
-    <div className="">
+    <>
       <Head>
         <title>Progress.me</title>
         <meta
@@ -20,7 +20,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="px-10 pb-10 flex flex-col h-full gap-y-4">
+      <div className="px-4 sm:px-10 pb-10 flex flex-col h-full gap-y-4">
         <nav className="flex justify-between items-center py-5">
           <h1 className="text-3xl font-bold">↗ progress.me</h1>
           {user.isLoggedIn ? (
@@ -35,7 +35,7 @@ const Home: NextPage = () => {
         </nav>
         <ProgressApp />
       </div>
-    </div>
+    </>
   );
 };
 
