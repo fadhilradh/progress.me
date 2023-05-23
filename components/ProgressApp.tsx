@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AreaProgress from "@/components/AreaProgress";
+import DynamicChart from "@/components/DynamicChart";
 import { InputWithText } from "@/components/InputWithText";
 import { AreaChart, Card, Grid } from "@tremor/react";
 import {
@@ -43,8 +43,11 @@ const ProgressApp = () => {
     >([]),
     [filteredRange, setFilteredRange] = useState<any>(null),
     [rangeVal, setRangeVal] = useState<Range>({ label: "", value: 0 }),
-    [rangeVals, setRangeVals] = useState<number[]>([]);
-
+    [rangeVals, setRangeVals] = useState<number[]>([]),
+    [chartType, setChartType] = useState<"area" | "line" | "bar">("area"),
+    [barChartType, setBarChartType] = useState<"vertical" | "horizontal">(
+      "horizontal"
+    );
   function addChart() {
     try {
       api.post("/chart-progresses", {
@@ -135,7 +138,8 @@ const ProgressApp = () => {
       <Grid className="gap-5" numCols={1} numColsLg={2}>
         {userCharts?.map((chart: any, idx: number) => {
           return (
-            <AreaProgress
+            <DynamicChart
+              chartType="area"
               key={userRawCharts[idx].chart_id}
               chartdata={userCharts[idx].sort(
                 (a, b) => Number(a.progress_no) - Number(b.progress_no)
@@ -168,43 +172,78 @@ const ProgressApp = () => {
               </Button>
             )}
           </div>
-          <div className="grid w-full items-center gap-1.5 ">
-            <Label>Track by</Label>
-            <Select
-              disabled={isCreatingChart}
-              onValueChange={setSelectedRange}
-              value={selectedRange}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder={selectedRange} />
-              </SelectTrigger>
-              <SelectContent>
-                {/* TODO : support date */}
-                {/* <SelectItem value="date">Date</SelectItem> */}
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="yearly">Yearly</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid w-full items-center gap-1.5 ">
-            <Label>Chart Color</Label>
-            <Select
-              onValueChange={(e) => setChartColor([e])}
-              value={selectedColors[0]}
-            >
-              <SelectTrigger className="w-[180px] capitalize">
-                <SelectValue placeholder="Your favorite chart color" />
-              </SelectTrigger>
-              <SelectContent>
-                {chartColors?.map((color: ChartColorOptions) => (
-                  <SelectItem className="capitalize" key={color} value={color}>
-                    {color}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <section className="flex sm:flex-row flex-col gap-5 sm:gap-0 justify-between">
+            <div className="grid w-full items-center gap-2 ">
+              <Label>Chart Type</Label>
+              <Select onValueChange={setChartType} value={chartType}>
+                <SelectTrigger className="w-[250px]">
+                  <SelectValue placeholder="Select chart type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="area">Area</SelectItem>
+                  <SelectItem value="bar">Bar</SelectItem>
+                  <SelectItem value="line">Line</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {chartType == "bar" && (
+              <div className="grid w-full items-center gap-2 ">
+                <Label>Bar Chart Layout</Label>
+                <Select onValueChange={setBarChartType} value={barChartType}>
+                  <SelectTrigger className="w-[250px]">
+                    <SelectValue placeholder="Select bar chart layout" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="vertical">Vertical</SelectItem>
+                    <SelectItem value="horizontal">Horizontal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </section>
+          <section className="flex sm:flex-row flex-col gap-5 sm:gap-0 justify-between">
+            <div className="grid w-full items-center gap-2 ">
+              <Label>Track by</Label>
+              <Select
+                disabled={isCreatingChart}
+                onValueChange={setSelectedRange}
+                value={selectedRange}
+              >
+                <SelectTrigger className="w-[250px]">
+                  <SelectValue placeholder="Weekly, monthly or yearly" />
+                </SelectTrigger>
+                <SelectContent>
+                  {/* TODO : support date */}
+                  {/* <SelectItem value="date">Date</SelectItem> */}
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid w-full items-center gap-2 ">
+              <Label>Chart Color</Label>
+              <Select
+                onValueChange={(e) => setChartColor([e])}
+                value={selectedColors[0]}
+              >
+                <SelectTrigger className="w-[250px] capitalize">
+                  <SelectValue placeholder="Your favorite chart color" />
+                </SelectTrigger>
+                <SelectContent>
+                  {chartColors?.map((color: ChartColorOptions) => (
+                    <SelectItem
+                      className="capitalize"
+                      key={color}
+                      value={color}
+                    >
+                      {color}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </section>
           {selectedRange && (
             <section className="flex flex-col gap-y-3">
               <Label className="text-xl my-3 underline">Add Progress</Label>
@@ -215,7 +254,7 @@ const ProgressApp = () => {
                 onValueChange={(v: Range) => setRangeVal(v)}
                 value={rangeVal}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[250px]">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent {...register("range")}>
@@ -250,6 +289,11 @@ const ProgressApp = () => {
             disabled={chartData?.length < 2}
             variant="outline"
             onClick={addChart}
+            title={
+              chartData?.length < 2
+                ? "Add more progress to save"
+                : "Save your chart to cloud"
+            }
           >
             Save Chart
           </Button>
@@ -258,12 +302,14 @@ const ProgressApp = () => {
           <div className="flex justify-center">
             <p className="text-lg font-semibold my-2">Chart Preview</p>
           </div>
-          <AreaChart
+          <DynamicChart
             colors={selectedColors}
-            categories={[progressName]}
-            data={chartData}
-            index={selectedRange}
+            categoryNames={[progressName]}
+            chartdata={chartData}
+            idx={selectedRange}
             maxValue={maxValue}
+            chartType={chartType}
+            barChartType={barChartType}
           />
         </Card>
       </Grid>

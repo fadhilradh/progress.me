@@ -7,38 +7,38 @@ import {
   totalProjects,
 } from "@/data/dummy";
 import React from "react";
-import AreaProgress from "./AreaProgress";
+import DynamicChart from "./DynamicChart";
 
 const PlaceholderCharts = () => {
   return (
     <>
-      {/* <AreaProgress
+      {/* <DynamicChart
         colors={["blue"]}
         categoryNames={["My Personal Coding Projects Count"]}
         chartdata={totalProjects}
       /> */}
-      <AreaProgress
+      <DynamicChart
         colors={["orange"]}
         categoryNames={["Total Books Read"]}
         chartdata={booksRead}
       />
-      <AreaProgress
+      <DynamicChart
         colors={["fuchsia"]}
         categoryNames={["Average Daily Food Expense (IDR)"]}
         chartdata={dailyExpense}
       />
-      <AreaProgress
+      <DynamicChart
         colors={["indigo", "cyan"]}
         categoryNames={["Online Shop (IDR)", "Dropshipping (IDR)"]}
         chartdata={mySideBusinessIncome}
       />
-      {/* <AreaProgress
+      {/* <DynamicChart
         colors={["purple"]}
         categoryNames={["My Weight (kg)"]}
         chartdata={myWeight}
       /> */}
 
-      <AreaProgress
+      <DynamicChart
         colors={["green"]}
         categoryNames={["My Average Phone Screen Time (hour)"]}
         chartdata={screenTime}
