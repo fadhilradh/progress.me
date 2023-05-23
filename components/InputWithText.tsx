@@ -21,7 +21,9 @@ export function InputWithText({
 }: InputWithTextProps) {
   return (
     <div className="grid w-full max-w-sm items-center gap-1.5">
-      <Label htmlFor={String(label)}>{label}</Label>
+      <Label className="mb-1" htmlFor={String(label)}>
+        {label}
+      </Label>
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -29,6 +31,7 @@ export function InputWithText({
         id={String(label)}
         placeholder={placeholder}
         disabled={disabled}
+        autoComplete="off"
       />
       <p className="text-sm text-muted-foreground">{text}</p>
     </div>

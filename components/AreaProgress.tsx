@@ -1,4 +1,4 @@
-import { ChartData, ColorOptions } from "@/types/tremor";
+import { ChartData, ColorOptions } from "@/types/chart";
 import { Card, Title, AreaChart } from "@tremor/react";
 
 const dataFormatter = (number: number) =>

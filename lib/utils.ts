@@ -1,13 +1,13 @@
-import { ChartData, ProgressChart } from "@/types/tremor";
+import { ChartDataWithLabel } from "@/types/chart";
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import {ChartsWithProgressResponse} from "@/types/api"
+import { ChartsWithProgressResponse } from "@/types/api";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function serializeProgressReq(data: ChartData[]) {
+export function serializeProgressReq(data: ChartDataWithLabel[]) {
   const ranges = ["daily", "weekly", "monthly", "yearly"],
     firstData = Object.keys(data[0]),
     rangeTypeIdx = firstData.findIndex((d) => ranges.indexOf(d) !== -1),
@@ -18,16 +18,16 @@ export function serializeProgressReq(data: ChartData[]) {
   return data?.map((d, i) => ({
     range_value: d[rangeType],
     progress_value: Number(d[progressName]),
-    progress_no: i + 1
+    progress_no: i + 1,
   }));
 }
 
 export function serializeProgressRes(data: any) {
-    return data?.map((d : ChartsWithProgressResponse, i :number) => {
-        return d.progress_data.map((p, idx) => ({
-        [d.progress_name]: p.progress_value,
-        [d.range_type]: p.range_value,
-        progress_no : p.progress_no
-      }))
-    })
+  return data?.map((d: ChartsWithProgressResponse, i: number) => {
+    return d.progress_data.map((p, idx) => ({
+      [d.progress_name]: p.progress_value,
+      [d.range_type]: p.range_value,
+      progress_no: p.progress_no,
+    }));
+  });
 }

@@ -14,14 +14,14 @@ import { Label } from "./ui/label";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Button } from "./ui/button";
 import { RotateCcw } from "lucide-react";
-import { chartColors, ChartData, ProgressChart } from "@/types/tremor";
+import { chartColors, ChartData, ProgressChart, Range } from "@/types/chart";
 import { MONTHS, WEEKS, YEARS } from "@/data/time";
 import { api } from "@/lib/axios";
 import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
 import { useTypedSelector } from "@/store/store";
 import { ChartsWithProgressResponse } from "@/types/api";
 
-const rangeMapping: Record<string, any> = {
+const rangeMapping: Record<string, Range[]> = {
   monthly: MONTHS,
   yearly: YEARS,
   weekly: WEEKS,
@@ -30,7 +30,6 @@ const rangeMapping: Record<string, any> = {
 const ProgressApp = () => {
   const { register, handleSubmit, control, getValues, setValue } = useForm(),
     [chartColor, setChartColor] = useState<string>(""),
-    rangeData = useWatch({ control, name: "range" }),
     [progressName, setProgressName] = useState<string>(""),
     [progressValue, setProgressValue] = useState<number | null>(),
     [selectedRange, setSelectedRange] = useState<string>(""),
@@ -44,7 +43,10 @@ const ProgressApp = () => {
     [userCharts, setUserCharts] = useState<ChartData[][]>([]),
     [userRawCharts, setUserRawCharts] = useState<
       ChartsWithProgressResponse[] | []
-    >([]);
+    >([]),
+    [filteredRange, setFilteredRange] = useState<any>(null),
+    [rangeVal, setRangeVal] = useState<Range>({ label: "", value: 0 }),
+    [rangeVals, setRangeVals] = useState<number[]>([]);
 
   function addChart() {
     try {
@@ -82,31 +84,57 @@ const ProgressApp = () => {
     }
   }
 
+  function updateSelectedRanges(v: Range) {
+    setRangeVal(v);
+  }
+
   React.useEffect(() => {
-    console.log(chartData);
-  }, [chartData?.data?.length]);
+    console.log(
+      "🚀 ~ file: ProgressApp.tsx:91 ~ ProgressApp ~ chartData:",
+      chartData
+    );
+  }, [chartData?.data.length]);
+
+  React.useEffect(() => {
+    setFilteredRange(rangeMapping?.[selectedRange]);
+  }, [selectedRange]);
+
+  React.useEffect(() => {
+    console.log("I am running");
+    setFilteredRange(
+      rangeMapping[selectedRange]?.filter(
+        (r: Range) => !rangeVals?.includes(r?.value)
+      )
+    );
+  }, [rangeVals.length]);
 
   React.useEffect(() => {
     getUserCharts();
-    console.log(userCharts);
-  }, [userCharts?.length]);
+    // console.log(userCharts);
+  }, []);
 
   function addProgress() {
     const newData = {
-      [selectedRange]: rangeData,
+      [selectedRange]: rangeVal.label,
+      progress_no: rangeVal.value,
       [progressName]: progressValue,
     };
     setChartData({
-      data: !chartData ? [newData] : [...chartData?.data, newData],
+      data: !chartData
+        ? [newData]
+        : [...chartData?.data, newData].sort(
+            (a, b) => Number(a.progress_no) - Number(b.progress_no)
+          ),
     });
-
+    setRangeVals([...rangeVals, rangeVal.value]);
     const maxValue = Math.max(
       Number(...chartData?.data.map((data) => data[progressName]))
     );
-    setValue("range", "Select");
-    setProgressValue(0);
+    setRangeVal({ label: "", value: 0 });
+    setProgressValue(null);
     setMaxValue(maxValue);
     setIsCreatingChart(true);
+    setRangeVals([...rangeVals, rangeVal.value]);
   }
 
   return (
@@ -127,13 +155,13 @@ const ProgressApp = () => {
       })}
       {/* <PlaceholderCharts /> */}
       <section className="border border-gray-300 shadow-xl p-6 rounded-xl grid gap-y-5">
-        <h4 className="text-2xl ">Add New Progress Chart</h4>
+        <h4 className="text-2xl ">Add New Chart</h4>
         <div className="flex justify-between items-center">
           <InputWithText
             disabled={isCreatingChart}
             value={progressName}
             onChange={setProgressName}
-            label="Progress Name"
+            label="Chart Name"
             placeholder="E.g. Weight lifted, courses completed, average daily expense"
           />
           {isCreatingChart && (
@@ -178,32 +206,30 @@ const ProgressApp = () => {
 
         {selectedRange && (
           <section className="flex flex-col gap-y-3">
-            <Label className="text-xl my-3">Add progress :</Label>
-            <Label className="capitalize -mb-1">{selectedRange}</Label>
-            <Controller
-              control={control}
-              name="range"
-              render={({ field: { onChange, value, ref } }) => {
-                return (
-                  <Select onValueChange={onChange} value={value}>
-                    <SelectTrigger className="w-[180px]" ref={ref}>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent {...register("range")}>
-                      {rangeMapping[selectedRange]?.map((time: any) => (
-                        <SelectItem
-                          className="capitalize"
-                          key={time.value}
-                          value={time.value}
-                        >
-                          {time.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                );
-              }}
-            />
+            <Label className="text-xl my-3">Add Progress</Label>
+            <Label className="capitalize -mb-1">
+              {selectedRange.substring(0, selectedRange.length - 2)}
+            </Label>
+
+            <Select
+              onValueChange={(v) => updateSelectedRanges(v)}
+              value={rangeVal}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent {...register("range")}>
+                {filteredRange?.map((time: any) => (
+                  <SelectItem
+                    className="capitalize"
+                    key={time.value}
+                    value={time}
+                  >
+                    {time.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             <InputWithText
               value={progressValue}
@@ -215,7 +241,7 @@ const ProgressApp = () => {
         )}
         <Button
           disabled={!progressValue}
-          variant="secondary"
+          variant="subtle"
           onClick={addProgress}
         >
           Add Progress
@@ -228,13 +254,18 @@ const ProgressApp = () => {
           Save Chart
         </Button>
       </section>
-      <AreaProgress
-        colors={[chartColor]}
-        categoryNames={[progressName]}
-        chartdata={chartData?.data}
-        idx={selectedRange}
-        maxValue={maxValue}
-      />
+      <section>
+        <div className="flex justify-center ">
+          <p className="text-lg font-semibold my-2">Chart Preview</p>
+        </div>
+        <AreaProgress
+          colors={[chartColor]}
+          categoryNames={[progressName]}
+          chartdata={chartData?.data}
+          idx={selectedRange}
+          maxValue={maxValue}
+        />
+      </section>
     </Grid>
   );
 };
