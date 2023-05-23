@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AreaProgress from "@/components/AreaProgress";
 import { InputWithText } from "@/components/InputWithText";
-import { Grid } from "@tremor/react";
+import { AreaChart, Card, Grid } from "@tremor/react";
 import {
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import PlaceholderCharts from "./PlaceholderCharts";
 import { Label } from "./ui/label";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { RotateCcw } from "lucide-react";
 import { chartColors, ChartData, Range } from "@/types/chart";
@@ -103,7 +103,6 @@ const ProgressApp = () => {
 
   React.useEffect(() => {
     getUserCharts();
-    // console.log(userCharts);
   }, []);
 
   function addProgress() {
@@ -139,135 +138,139 @@ const ProgressApp = () => {
   }
 
   return (
-    <Grid className="gap-5" numCols={1} numColsLg={2}>
+    <div className="w-full grid gap-5">
       <h2>Your Charts :</h2>
-      {userCharts?.map((chart: any, idx: number) => {
-        return (
-          <AreaProgress
-            key={userRawCharts[idx].chart_id}
-            chartdata={userCharts[idx].sort(
-              (a, b) => Number(a.progress_no) - Number(b.progress_no)
+      <Grid className="gap-5" numCols={1} numColsLg={2}>
+        {userCharts?.map((chart: any, idx: number) => {
+          return (
+            <AreaProgress
+              key={userRawCharts[idx].chart_id}
+              chartdata={userCharts[idx].sort(
+                (a, b) => Number(a.progress_no) - Number(b.progress_no)
+              )}
+              colors={[userRawCharts[idx].chart_color]}
+              idx={userRawCharts[idx].range_type}
+              categoryNames={[userRawCharts[idx].progress_name]}
+            />
+          );
+        })}
+      </Grid>
+      <Grid className="gap-5" numCols={1} numColsLg={2}>
+        <section className="grid gap-5 border border-gray-300 shadow-xl p-6 rounded-xl ">
+          <h4 className="text-2xl ">Add New Chart</h4>
+          <div className="flex justify-between items-center">
+            <InputWithText
+              disabled={isCreatingChart}
+              value={progressName}
+              onChange={setProgressName}
+              label="Chart Name"
+              placeholder="E.g. Weight lifted, courses completed, average daily expense"
+            />
+            {isCreatingChart && (
+              <Button
+                onClick={resetNewChart}
+                title="Reset data"
+                variant="ghost"
+              >
+                <RotateCcw />
+              </Button>
             )}
-            colors={[userRawCharts[idx].chart_color]}
-            idx={userRawCharts[idx].range_type}
-            categoryNames={[userRawCharts[idx].progress_name]}
-          />
-        );
-      })}
-      {/* <PlaceholderCharts /> */}
-      <section className="border border-gray-300 shadow-xl p-6 rounded-xl grid gap-y-5">
-        <h4 className="text-2xl ">Add New Chart</h4>
-        <div className="flex justify-between items-center">
-          <InputWithText
-            disabled={isCreatingChart}
-            value={progressName}
-            onChange={setProgressName}
-            label="Chart Name"
-            placeholder="E.g. Weight lifted, courses completed, average daily expense"
-          />
-          {isCreatingChart && (
-            <Button onClick={resetNewChart} title="Reset data" variant="ghost">
-              <RotateCcw />
-            </Button>
-          )}
-        </div>
-        <div className="grid w-full items-center gap-1.5 ">
-          <Label>Track by</Label>
-          <Select
-            disabled={isCreatingChart}
-            onValueChange={setSelectedRange}
-            value={selectedRange}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={selectedRange} />
-            </SelectTrigger>
-            <SelectContent>
-              {/* <SelectItem value="date">Date</SelectItem> */}
-              <SelectItem value="weekly">Weekly</SelectItem>
-              <SelectItem value="monthly">Monthly</SelectItem>
-              <SelectItem value="yearly">Yearly</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid w-full items-center gap-1.5 ">
-          <Label>Chart Color</Label>
-          <Select onValueChange={setChartColor} value={chartColor}>
-            <SelectTrigger className="w-[180px] capitalize">
-              <SelectValue placeholder="Your favorite chart color" />
-            </SelectTrigger>
-            <SelectContent>
-              {chartColors?.map((color: any) => (
-                <SelectItem className="capitalize" key={color} value={color}>
-                  {color}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {selectedRange && (
-          <section className="flex flex-col gap-y-3">
-            <Label className="text-xl my-3">Add Progress</Label>
-            <Label className="capitalize -mb-1">
-              {selectedRange.substring(0, selectedRange.length - 2)}
-            </Label>
-
+          </div>
+          <div className="grid w-full items-center gap-1.5 ">
+            <Label>Track by</Label>
             <Select
-              onValueChange={(v: Range) => updateSelectedRanges(v)}
-              value={rangeVal}
+              disabled={isCreatingChart}
+              onValueChange={setSelectedRange}
+              value={selectedRange}
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select" />
+                <SelectValue placeholder={selectedRange} />
               </SelectTrigger>
-              <SelectContent {...register("range")}>
-                {filteredRange?.map((time: any) => (
-                  <SelectItem
-                    className="capitalize"
-                    key={time.value}
-                    value={time}
-                  >
-                    {time.label}
+              <SelectContent>
+                {/* <SelectItem value="date">Date</SelectItem> */}
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="yearly">Yearly</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid w-full items-center gap-1.5 ">
+            <Label>Chart Color</Label>
+            <Select onValueChange={setChartColor} value={chartColor}>
+              <SelectTrigger className="w-[180px] capitalize">
+                <SelectValue placeholder="Your favorite chart color" />
+              </SelectTrigger>
+              <SelectContent>
+                {chartColors?.map((color: any) => (
+                  <SelectItem className="capitalize" key={color} value={color}>
+                    {color}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-
-            <InputWithText
-              value={progressValue}
-              onChange={setProgressValue}
-              label={progressName}
-              placeholder="Your progress value"
-            />
-          </section>
-        )}
-        <Button
-          disabled={!progressValue}
-          variant="subtle"
-          onClick={addProgress}
-        >
-          Add Progress
-        </Button>
-        <Button
-          disabled={chartData?.length < 2}
-          variant="outline"
-          onClick={addChart}
-        >
-          Save Chart
-        </Button>
-      </section>
-      <section>
-        <div className="flex justify-center ">
-          <p className="text-lg font-semibold my-2">Chart Preview</p>
-        </div>
-        <AreaProgress
-          colors={[chartColor]}
-          categoryNames={[progressName]}
-          chartdata={chartData}
-          idx={selectedRange}
-          maxValue={maxValue}
-        />
-      </section>
-    </Grid>
+          </div>
+          {selectedRange && (
+            <section className="flex flex-col gap-y-3">
+              <Label className="text-xl my-3">Add Progress</Label>
+              <Label className="capitalize -mb-1">
+                {selectedRange.substring(0, selectedRange.length - 2)}
+              </Label>
+              <Select
+                onValueChange={(v: Range) => updateSelectedRanges(v)}
+                value={rangeVal}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent {...register("range")}>
+                  {filteredRange?.map((time: any) => (
+                    <SelectItem
+                      className="capitalize"
+                      key={time.value}
+                      value={time}
+                    >
+                      {time.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <InputWithText
+                value={progressValue}
+                onChange={setProgressValue}
+                label={progressName}
+                placeholder="Your progress value"
+              />
+            </section>
+          )}
+          <Button
+            disabled={!progressValue}
+            variant="subtle"
+            onClick={addProgress}
+          >
+            Add Progress
+          </Button>
+          <Button
+            disabled={chartData?.length < 2}
+            variant="outline"
+            onClick={addChart}
+          >
+            Save Chart
+          </Button>
+        </section>
+        <Card className="shadow-xl">
+          <div className="flex justify-center">
+            <p className="text-lg font-semibold my-2">Chart Preview</p>
+          </div>
+          <AreaChart
+            colors={[chartColor]}
+            categories={[progressName]}
+            data={chartData}
+            index={selectedRange}
+            maxValue={maxValue}
+          />
+        </Card>
+      </Grid>
+    </div>
   );
 };
 

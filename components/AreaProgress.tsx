@@ -32,7 +32,7 @@ const AreaProgress = ({
         yAxisWidth={60}
         curveType="linear"
         maxValue={maxValue}
-        className="h-[500px]"
+        className=""
       />
     </Card>
   );
