@@ -2,7 +2,7 @@ export type ChartData = Record<string, string | number>;
 
 export interface Range {
   label: string;
-  value: number;
+  value: any;
 }
 
 export type Chart = ChartData[];
@@ -30,3 +30,6 @@ export type ChartColorOptions =
   | "fuchsia"
   | "pink"
   | "rose";
+
+export type ChartType = "bar" | "line" | "area";
+export type BarChartType = "horizontal" | "vertical";

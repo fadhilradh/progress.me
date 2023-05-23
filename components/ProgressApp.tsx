@@ -48,6 +48,7 @@ const ProgressApp = () => {
     [barChartType, setBarChartType] = useState<"vertical" | "horizontal">(
       "horizontal"
     );
+
   function addChart() {
     try {
       api.post("/chart-progresses", {
@@ -139,7 +140,8 @@ const ProgressApp = () => {
         {userCharts?.map((chart: any, idx: number) => {
           return (
             <DynamicChart
-              chartType="area"
+              chartType={userRawCharts[idx].chart_type}
+              barChartType={userRawCharts[idx].bar_chart_type}
               key={userRawCharts[idx].chart_id}
               chartdata={userCharts[idx].sort(
                 (a, b) => Number(a.progress_no) - Number(b.progress_no)
@@ -279,7 +281,7 @@ const ProgressApp = () => {
             </section>
           )}
           <Button
-            disabled={!progressValue}
+            disabled={!progressValue || !progressName || !selectedRange}
             variant="subtle"
             onClick={addProgress}
           >
@@ -310,6 +312,7 @@ const ProgressApp = () => {
             maxValue={maxValue}
             chartType={chartType}
             barChartType={barChartType}
+            className="shadow-none"
           />
         </Card>
       </Grid>

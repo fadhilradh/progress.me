@@ -13,6 +13,7 @@ interface DynamicChartProps {
   maxValue?: number;
   chartType: "area" | "line" | "bar";
   barChartType?: "vertical" | "horizontal";
+  className?: string;
 }
 
 // eslint-disable-next-line react/display-name
@@ -24,6 +25,7 @@ const DynamicChart = ({
   maxValue,
   chartType = "area",
   barChartType = "vertical",
+  className = "",
 }: DynamicChartProps) => {
   const chartTypeMapping: Record<string, any> = {
     area: AreaChart,
@@ -31,7 +33,7 @@ const DynamicChart = ({
     bar: BarChart,
   };
   return (
-    <Card className="shadow-xl rounded-xl p-4 sm:p-6">
+    <Card className={`shadow-xl rounded-xl p-4 sm:p-6 ${className}`}>
       <Title>{categoryNames?.join(" & ")}</Title>
       {React.createElement(chartTypeMapping[chartType], {
         data: chartdata,
@@ -39,10 +41,8 @@ const DynamicChart = ({
         categories: [...categoryNames],
         colors: [...colors],
         valueFormatter: dataFormatter,
-        // curveType: "linear"
         maxValue: maxValue,
         layout: barChartType,
-        className: "",
       })}
     </Card>
   );
