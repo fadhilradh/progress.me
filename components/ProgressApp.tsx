@@ -57,7 +57,7 @@ const ProgressApp = () => {
         progress_data: serializeProgressReq(chartData),
         progress_name: chartName,
         range_type: selectedRange,
-        // TODO-not priority: support multiple colors
+        // TODO-not priority: support multiple colors and lines
         chart_color: selectedColors[0],
       });
       getUserCharts();

@@ -1,7 +1,8 @@
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ChartsWithProgressResponse } from "@/types/api";
+import { ChartDataRes, ChartsWithProgressResponse } from "@/types/api";
 import { ChartData } from "@/types/chart";
+import { Value } from "@radix-ui/react-select";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -24,10 +25,28 @@ export function serializeProgressReq(data: ChartData[]) {
 
 export function serializeProgressRes(data: any) {
   return data?.map((d: ChartsWithProgressResponse, i: number) => {
-    return d.progress_data.map((p, idx) => ({
+    return d.progress_data.map((p) => ({
       [d.progress_name]: p.progress_value,
       [d.range_type]: p.range_value,
       progress_no: p.progress_no,
     }));
   });
+}
+
+export function serializeChartRes(d: ChartDataRes) {
+  return d.progress_data.map((p) => ({
+    [d.progress_name]: p.progress_value,
+    [d.range_type]: p.range_value,
+    progress_no: p.progress_no,
+    id: p.progress_id,
+  }));
+}
+
+export function serializeResToProgress(res: ChartData[]) {
+  const tes = res.map((r) => ({
+    value: r.progress_value,
+    id: r.progress_id,
+    rangeVal: r.range_value,
+  }));
+  return tes;
 }

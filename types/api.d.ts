@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import { BarChartType, ChartType } from "./chart";
+import { BarChartType, ChartColorOptions, ChartType } from "./chart";
 
 export interface ChartsWithProgressResponse {
   chart_id: UUID;
@@ -16,4 +16,14 @@ export interface ProgressData {
   progress_value: number;
   range_value: string;
   progress_no: number;
+}
+
+export interface ChartDataRes {
+  chart_id: UUID;
+  chart_color: ChartColorOptions;
+  chart_type: ChartType;
+  bar_chart_type: BarChartType;
+  range_type: string;
+  progress_name: string;
+  progress_data: ProgressData[];
 }
