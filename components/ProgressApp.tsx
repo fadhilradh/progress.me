@@ -12,7 +12,7 @@ import {
 import { Label } from "./ui/label";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
-import { RotateCcw } from "lucide-react";
+import { Plus, RotateCcw } from "lucide-react";
 import { ChartData, ChartColorOptions, Range } from "@/types/chart";
 import { MONTHS, WEEKS, YEARS } from "@/data/time";
 import { api } from "@/lib/axios";
@@ -30,7 +30,7 @@ const rangeMapping: Record<string, Range[]> = {
 const ProgressApp = () => {
   const { register, setValue } = useForm(),
     [selectedColors, setChartColor] = useState<ChartColorOptions[]>(["blue"]),
-    [progressName, setProgressName] = useState<string>(""),
+    [chartName, setchartName] = useState<string>(""),
     [progressValue, setProgressValue] = useState<number | "">(),
     [selectedRange, setSelectedRange] = useState<string>(""),
     [chartData, setChartData] = useState<ChartData[]>([]),
@@ -47,14 +47,15 @@ const ProgressApp = () => {
     [chartType, setChartType] = useState<"area" | "line" | "bar">("area"),
     [barChartType, setBarChartType] = useState<"vertical" | "horizontal">(
       "horizontal"
-    );
+    ),
+    [isChartFormOpen, setIsChartFormOpen] = useState<boolean>(false);
 
   function addChart() {
     try {
       api.post("/chart-progresses", {
         user_id: user.userId,
         progress_data: serializeProgressReq(chartData),
-        progress_name: progressName,
+        progress_name: chartName,
         range_type: selectedRange,
         // TODO-not priority: support multiple colors
         chart_color: selectedColors[0],
@@ -71,7 +72,7 @@ const ProgressApp = () => {
     setProgressValue(0);
     setIsCreatingChart(false);
     setChartData([]);
-    setProgressName("");
+    setchartName("");
     setValue("range", "");
     setSelectedRange("");
   }
@@ -106,7 +107,7 @@ const ProgressApp = () => {
     const newData = {
       [selectedRange]: rangeVal.label,
       progress_no: rangeVal.value,
-      [progressName]: progressValue,
+      [chartName]: progressValue,
     };
     setChartData(
       // @ts-ignore-next-line
@@ -123,7 +124,7 @@ const ProgressApp = () => {
     setTimeout(() => {
       const maxval = Math.max(
         ...[
-          ...chartData?.map((data) => Number(data[progressName])),
+          ...chartData?.map((data) => Number(data[chartName])),
           Number(progressValue),
         ]
       );
@@ -135,7 +136,185 @@ const ProgressApp = () => {
 
   return (
     <div className="w-full grid gap-5">
-      <h2>Your Charts :</h2>
+      {isChartFormOpen && (
+        <Grid className="gap-3 sm:gap-5" numCols={1} numColsLg={2}>
+          {(chartName || selectedRange) && (
+            <div className="shadow-xl">
+              <div className="flex justify-center">
+                <p className="text-lg font-semibold mb-2">New Chart Preview</p>
+              </div>
+              <DynamicChart
+                colors={selectedColors}
+                categoryNames={[chartName]}
+                chartdata={chartData}
+                idx={selectedRange}
+                maxValue={maxValue}
+                chartType={chartType}
+                barChartType={barChartType}
+                className="shadow-none border-none p-3"
+              />
+            </div>
+          )}
+          <section className="grid gap-3 sm:gap-5 border border-gray-300 shadow-xl p-6 rounded-xl ">
+            <h4 className="text-2xl mb-2">Add New Chart</h4>
+            <div className="flex justify-between items-center">
+              <InputWithText
+                disabled={isCreatingChart}
+                value={chartName}
+                onChange={setchartName}
+                label="Chart Name"
+                placeholder="E.g. Weight lifted, courses completed, average daily expense"
+              />
+              {isCreatingChart && (
+                <Button
+                  onClick={resetNewChart}
+                  title="Reset data"
+                  variant="destructive"
+                  className="-mb-3 px-2 flex justify-center items-center"
+                >
+                  <RotateCcw size="20" />
+                </Button>
+              )}
+            </div>
+            <section className="flex sm:flex-row flex-col gap-5 sm:gap-0 justify-between">
+              <div className="grid w-full items-center gap-2 ">
+                <Label>Chart Type</Label>
+                <Select onValueChange={setChartType} value={chartType}>
+                  <SelectTrigger className="w-[250px]">
+                    <SelectValue placeholder="Select chart type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="area">Area</SelectItem>
+                    <SelectItem value="bar">Bar</SelectItem>
+                    <SelectItem value="line">Line</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {chartType == "bar" && (
+                <div className="grid w-full items-center gap-2 ">
+                  <Label>Bar Chart Layout</Label>
+                  <Select onValueChange={setBarChartType} value={barChartType}>
+                    <SelectTrigger className="w-[250px]">
+                      <SelectValue placeholder="Select bar chart layout" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="vertical">Vertical</SelectItem>
+                      <SelectItem value="horizontal">Horizontal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </section>
+            <section className="flex sm:flex-row flex-col gap-5 sm:gap-0 justify-between">
+              <div className="grid w-full items-center gap-2 ">
+                <Label>Track by</Label>
+                <Select
+                  disabled={isCreatingChart}
+                  onValueChange={setSelectedRange}
+                  value={selectedRange}
+                >
+                  <SelectTrigger className="w-[250px]">
+                    <SelectValue placeholder="Weekly, monthly or yearly" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* TODO : support date */}
+                    {/* <SelectItem value="date">Date</SelectItem> */}
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="yearly">Yearly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid w-full items-center gap-2 ">
+                <Label>Chart Color</Label>
+                <Select
+                  onValueChange={(e) => setChartColor([e])}
+                  value={selectedColors[0]}
+                >
+                  <SelectTrigger className="w-[250px] capitalize">
+                    <SelectValue placeholder="Your favorite chart color" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {chartColors?.map((color: ChartColorOptions) => (
+                      <SelectItem
+                        className="capitalize"
+                        key={color}
+                        value={color}
+                      >
+                        {color}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </section>
+            {selectedRange && (
+              <section className="flex flex-col gap-y-3">
+                <Label className="text-xl my-3 underline">Add Progress</Label>
+                <Label className="capitalize -mb-1">
+                  {selectedRange.substring(0, selectedRange.length - 2)}
+                </Label>
+                <Select
+                  onValueChange={(v: Range) => setRangeVal(v)}
+                  value={rangeVal}
+                >
+                  <SelectTrigger className="w-[250px]">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent {...register("range")}>
+                    {filteredRange?.map((time: any) => (
+                      <SelectItem
+                        className="capitalize"
+                        key={time.value}
+                        value={time}
+                      >
+                        {time.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <InputWithText
+                  type="number"
+                  value={progressValue}
+                  onChange={setProgressValue}
+                  label={chartName}
+                  placeholder="Your progress (in numbers)"
+                />
+              </section>
+            )}
+            <Button
+              disabled={!progressValue || !chartName || !selectedRange}
+              variant="subtle"
+              onClick={addProgress}
+            >
+              Add Progress
+            </Button>
+            <Button
+              disabled={chartData?.length < 2}
+              variant="outline"
+              onClick={addChart}
+              title={
+                chartData?.length < 2
+                  ? "Add more progress to save"
+                  : "Save your chart to cloud"
+              }
+            >
+              Save Chart
+            </Button>
+          </section>
+        </Grid>
+      )}
+      {!isChartFormOpen && (
+        <section className="h-[200px] w-full flex justify-center items-center">
+          <Button
+            onClick={() => setIsChartFormOpen(true)}
+            className="flex gap-x-2 items-center"
+          >
+            <Plus /> Add New Chart
+          </Button>
+        </section>
+      )}
+      <h2 className="text-center text-xl">Your Progress Charts :</h2>
       <Grid className="gap-5" numCols={1} numColsLg={2}>
         {userCharts?.map((chart: any, idx: number) => {
           return (
@@ -149,172 +328,10 @@ const ProgressApp = () => {
               colors={[userRawCharts[idx].chart_color]}
               idx={userRawCharts[idx].range_type}
               categoryNames={[userRawCharts[idx].progress_name]}
+              chartId={userRawCharts[idx].chart_id}
             />
           );
         })}
-      </Grid>
-      <Grid className="gap-3 sm:gap-5" numCols={1} numColsLg={2}>
-        <section className="grid gap-3 sm:gap-5 border border-gray-300 shadow-xl p-6 rounded-xl ">
-          <h4 className="text-2xl mb-2">Add New Chart</h4>
-          <div className="flex justify-between items-center">
-            <InputWithText
-              disabled={isCreatingChart}
-              value={progressName}
-              onChange={setProgressName}
-              label="Chart Name"
-              placeholder="E.g. Weight lifted, courses completed, average daily expense"
-            />
-            {isCreatingChart && (
-              <Button
-                onClick={resetNewChart}
-                title="Reset data"
-                variant="ghost"
-              >
-                <RotateCcw />
-              </Button>
-            )}
-          </div>
-          <section className="flex sm:flex-row flex-col gap-5 sm:gap-0 justify-between">
-            <div className="grid w-full items-center gap-2 ">
-              <Label>Chart Type</Label>
-              <Select onValueChange={setChartType} value={chartType}>
-                <SelectTrigger className="w-[250px]">
-                  <SelectValue placeholder="Select chart type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="area">Area</SelectItem>
-                  <SelectItem value="bar">Bar</SelectItem>
-                  <SelectItem value="line">Line</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            {chartType == "bar" && (
-              <div className="grid w-full items-center gap-2 ">
-                <Label>Bar Chart Layout</Label>
-                <Select onValueChange={setBarChartType} value={barChartType}>
-                  <SelectTrigger className="w-[250px]">
-                    <SelectValue placeholder="Select bar chart layout" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="vertical">Vertical</SelectItem>
-                    <SelectItem value="horizontal">Horizontal</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </section>
-          <section className="flex sm:flex-row flex-col gap-5 sm:gap-0 justify-between">
-            <div className="grid w-full items-center gap-2 ">
-              <Label>Track by</Label>
-              <Select
-                disabled={isCreatingChart}
-                onValueChange={setSelectedRange}
-                value={selectedRange}
-              >
-                <SelectTrigger className="w-[250px]">
-                  <SelectValue placeholder="Weekly, monthly or yearly" />
-                </SelectTrigger>
-                <SelectContent>
-                  {/* TODO : support date */}
-                  {/* <SelectItem value="date">Date</SelectItem> */}
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid w-full items-center gap-2 ">
-              <Label>Chart Color</Label>
-              <Select
-                onValueChange={(e) => setChartColor([e])}
-                value={selectedColors[0]}
-              >
-                <SelectTrigger className="w-[250px] capitalize">
-                  <SelectValue placeholder="Your favorite chart color" />
-                </SelectTrigger>
-                <SelectContent>
-                  {chartColors?.map((color: ChartColorOptions) => (
-                    <SelectItem
-                      className="capitalize"
-                      key={color}
-                      value={color}
-                    >
-                      {color}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </section>
-          {selectedRange && (
-            <section className="flex flex-col gap-y-3">
-              <Label className="text-xl my-3 underline">Add Progress</Label>
-              <Label className="capitalize -mb-1">
-                {selectedRange.substring(0, selectedRange.length - 2)}
-              </Label>
-              <Select
-                onValueChange={(v: Range) => setRangeVal(v)}
-                value={rangeVal}
-              >
-                <SelectTrigger className="w-[250px]">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent {...register("range")}>
-                  {filteredRange?.map((time: any) => (
-                    <SelectItem
-                      className="capitalize"
-                      key={time.value}
-                      value={time}
-                    >
-                      {time.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <InputWithText
-                type="number"
-                value={progressValue}
-                onChange={setProgressValue}
-                label={progressName}
-                placeholder="Your progress (in numbers)"
-              />
-            </section>
-          )}
-          <Button
-            disabled={!progressValue || !progressName || !selectedRange}
-            variant="subtle"
-            onClick={addProgress}
-          >
-            Add Progress
-          </Button>
-          <Button
-            disabled={chartData?.length < 2}
-            variant="outline"
-            onClick={addChart}
-            title={
-              chartData?.length < 2
-                ? "Add more progress to save"
-                : "Save your chart to cloud"
-            }
-          >
-            Save Chart
-          </Button>
-        </section>
-        <Card className="shadow-xl">
-          <div className="flex justify-center">
-            <p className="text-lg font-semibold my-2">Chart Preview</p>
-          </div>
-          <DynamicChart
-            colors={selectedColors}
-            categoryNames={[progressName]}
-            chartdata={chartData}
-            idx={selectedRange}
-            maxValue={maxValue}
-            chartType={chartType}
-            barChartType={barChartType}
-            className="shadow-none"
-          />
-        </Card>
       </Grid>
     </div>
   );

@@ -1,5 +1,8 @@
 import { ChartData } from "@/types/chart";
 import { Card, Title, AreaChart, BarChart, LineChart } from "@tremor/react";
+import { UUID } from "crypto";
+import { Edit, Edit2Icon, Edit3Icon, EditIcon } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 const dataFormatter = (number: number) =>
@@ -14,6 +17,7 @@ interface DynamicChartProps {
   chartType: "area" | "line" | "bar";
   barChartType?: "vertical" | "horizontal";
   className?: string;
+  chartId?: UUID;
 }
 
 // eslint-disable-next-line react/display-name
@@ -26,6 +30,7 @@ const DynamicChart = ({
   chartType = "area",
   barChartType = "vertical",
   className = "",
+  chartId,
 }: DynamicChartProps) => {
   const chartTypeMapping: Record<string, any> = {
     area: AreaChart,
@@ -33,8 +38,12 @@ const DynamicChart = ({
     bar: BarChart,
   };
   return (
-    <Card className={`shadow-xl rounded-xl p-4 sm:p-6 ${className}`}>
-      <Title>{categoryNames?.join(" & ")}</Title>
+    <Card
+      className={`shadow-xl rounded-xl p-4 sm:p-6 cursor-pointer flex flex-col items-end`}
+    >
+      <Link href={`/charts/${chartId}`}>
+        <EditIcon color="gray" />
+      </Link>
       {React.createElement(chartTypeMapping[chartType], {
         data: chartdata,
         index: idx,
@@ -43,6 +52,8 @@ const DynamicChart = ({
         valueFormatter: dataFormatter,
         maxValue: maxValue,
         layout: barChartType,
+        className: "cursor-pointer " + className,
+        // yAxisWidth: 25,
       })}
     </Card>
   );
