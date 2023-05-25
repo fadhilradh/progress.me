@@ -1,3 +1,5 @@
+import { Range } from "@/types/chart";
+
 export const MONTHS = [
   { value: 1, label: "January" },
   { value: 2, label: "February" },
@@ -101,3 +103,9 @@ export const WEEKS = [
   { value: 47, label: "Dec 3rd week" },
   { value: 48, label: "Dec 4th week" },
 ];
+
+export const rangeMapping: Record<string, Range[]> = {
+  monthly: MONTHS,
+  yearly: YEARS,
+  weekly: WEEKS,
+};

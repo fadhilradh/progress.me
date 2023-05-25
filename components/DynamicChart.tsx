@@ -1,7 +1,7 @@
 import { ChartData } from "@/types/chart";
-import { Card, Title, AreaChart, BarChart, LineChart } from "@tremor/react";
+import { Card, AreaChart, BarChart, LineChart } from "@tremor/react";
 import { UUID } from "crypto";
-import { Edit, Edit2Icon, Edit3Icon, EditIcon } from "lucide-react";
+import { EditIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -37,6 +37,7 @@ const DynamicChart = ({
     line: LineChart,
     bar: BarChart,
   };
+
   return (
     <Card
       className={`shadow-xl rounded-xl p-4 sm:p-6 cursor-pointer flex flex-col items-end`}

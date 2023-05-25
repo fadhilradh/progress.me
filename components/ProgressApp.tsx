@@ -14,18 +14,12 @@ import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Plus, RotateCcw } from "lucide-react";
 import { ChartData, ChartColorOptions, Range } from "@/types/chart";
-import { MONTHS, WEEKS, YEARS } from "@/data/time";
+import { MONTHS, rangeMapping, WEEKS, YEARS } from "@/data/time";
 import { api } from "@/lib/axios";
 import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
 import { useTypedSelector } from "@/store/store";
 import { ChartsWithProgressResponse } from "@/types/api";
 import { chartColors } from "@/data/chart";
-
-const rangeMapping: Record<string, Range[]> = {
-  monthly: MONTHS,
-  yearly: YEARS,
-  weekly: WEEKS,
-};
 
 const ProgressApp = () => {
   const { register, setValue } = useForm(),
@@ -57,6 +51,7 @@ const ProgressApp = () => {
         progress_data: serializeProgressReq(chartData),
         progress_name: chartName,
         range_type: selectedRange,
+        chart_type: chartType,
         // TODO-not priority: support multiple colors and lines
         chart_color: selectedColors[0],
       });
@@ -108,6 +103,8 @@ const ProgressApp = () => {
       [selectedRange]: rangeVal.label,
       progress_no: rangeVal.value,
       [chartName]: progressValue,
+      range_value: rangeVal.label,
+      progress_value: progressValue,
     };
     setChartData(
       // @ts-ignore-next-line
@@ -314,7 +311,9 @@ const ProgressApp = () => {
           </Button>
         </section>
       )}
-      <h2 className="text-center text-xl">Your Progress Charts :</h2>
+      {userCharts.length > 0 && (
+        <h2 className="text-center text-xl">Your Progress Charts :</h2>
+      )}
       <Grid className="gap-5" numCols={1} numColsLg={2}>
         {userCharts?.map((chart: any, idx: number) => {
           return (
