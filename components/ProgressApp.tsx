@@ -242,6 +242,7 @@ const ProgressApp = () => {
                 <Select
                   // @ts-ignore
                   onValueChange={(v: Range) => setRangeVal(v)}
+                  // @ts-ignore
                   value={rangeVal}
                 >
                   <SelectTrigger className="w-[250px]">
