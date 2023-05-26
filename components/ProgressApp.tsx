@@ -193,6 +193,7 @@ const ProgressApp = () => {
                 <Label>Track by</Label>
                 <Select
                   disabled={isCreatingChart}
+                  /* @ts-ignore */
                   onValueChange={setSelectedRange}
                   value={selectedRange}
                 >
@@ -239,6 +240,7 @@ const ProgressApp = () => {
                   {selectedRange.substring(0, selectedRange.length - 2)}
                 </Label>
                 <Select
+                  // @ts-ignore
                   onValueChange={(v: Range) => setRangeVal(v)}
                   value={rangeVal}
                 >

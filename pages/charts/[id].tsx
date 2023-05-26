@@ -172,6 +172,7 @@ const ChartDetail = () => {
                     {rawChartData?.range_type.replace("ly", "")}
                   </Label>
                   <Select
+                    /* @ts-ignore */
                     onValueChange={(val: number) => {
                       updateProgress(val, "progress_no", p);
                       setIsEdited(true);
