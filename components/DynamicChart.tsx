@@ -17,7 +17,9 @@ interface DynamicChartProps {
   chartType: "area" | "line" | "bar";
   barChartType?: "vertical" | "horizontal";
   className?: string;
+  wrapperClassName?: string;
   chartId?: UUID;
+  editable: boolean;
 }
 
 // eslint-disable-next-line react/display-name
@@ -30,7 +32,9 @@ const DynamicChart = ({
   chartType = "area",
   barChartType = "vertical",
   className = "",
+  wrapperClassName = "",
   chartId,
+  editable,
 }: DynamicChartProps) => {
   const chartTypeMapping: Record<string, any> = {
     area: AreaChart,
@@ -40,11 +44,13 @@ const DynamicChart = ({
 
   return (
     <Card
-      className={`shadow-xl rounded-xl p-4 sm:p-6 cursor-pointer flex flex-col items-end`}
+      className={`shadow-xl rounded-xl p-4 sm:p-6 cursor-pointer flex flex-col items-end ${wrapperClassName}`}
     >
-      <Link href={`/charts/${chartId}`}>
-        <EditIcon color="gray" />
-      </Link>
+      {editable && (
+        <Link href={`/charts/${chartId}`}>
+          <EditIcon color="gray" />
+        </Link>
+      )}
       {React.createElement(chartTypeMapping[chartType], {
         data: chartdata,
         index: idx,

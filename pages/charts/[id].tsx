@@ -1,4 +1,5 @@
 import DynamicChart from "@/components/DynamicChart";
+import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,10 +12,11 @@ import {
 } from "@/components/ui/select";
 import { rangeMapping } from "@/data/time";
 import { api } from "@/lib/axios";
-import { serializeChartRes, serializeResToProgress } from "@/lib/utils";
+import { serializeChartRes } from "@/lib/utils";
 import { ProgressData } from "@/types/api";
 import { Range } from "@/types/chart";
-import { CheckIcon } from "lucide-react";
+import { UUID } from "crypto";
+import { CheckIcon, DeleteIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import React from "react";
 
@@ -28,19 +30,22 @@ const ChartDetail = () => {
     [isEdited, setIsEdited] = React.useState<boolean>(false),
     [editedValues, setEditedValues] = React.useState<any>([]),
     [availableRanges, setavailableRanges] = React.useState<any>(null),
-    [selectedRanges, setSelectedRanges] = React.useState<any>(null);
+    [selectedRanges, setSelectedRanges] = React.useState<any>(null),
+    [isAddingProgress, setIsAddingProgress] = React.useState<boolean>(false);
 
   async function getChartByID() {
     try {
       const { data } = await api.get(`/charts/${id}`);
       setRawChartData(data);
-      setChartData(serializeChartRes(data));
-      setSelectedRanges(data.progress_data.map((p: any) => p?.range_value));
-      setProgressValues(
-        data.progress_data.sort(
-          (a: any, b: any) => a.progress_no - b.progress_no
-        )
-      );
+      if (data?.progress_data?.length > 0) {
+        setChartData(serializeChartRes(data));
+        setSelectedRanges(data.progress_data.map((p: any) => p?.range_value));
+        setProgressValues(
+          data.progress_data.sort(
+            (a: any, b: any) => a.progress_no - b.progress_no
+          )
+        );
+      }
     } catch (e) {
       console.error(e);
     }
@@ -48,7 +53,7 @@ const ChartDetail = () => {
 
   async function patchProgresses() {
     try {
-      const { data } = await api.patch("/progresses", {
+      await api.patch("/progresses", {
         progresses: editedValues,
       });
       alert("Updated");
@@ -57,6 +62,17 @@ const ChartDetail = () => {
       console.error(e);
     } finally {
       setEditedValues([]);
+      setIsEdited(false);
+    }
+  }
+
+  async function deleteProgress(id: UUID) {
+    try {
+      await api.delete(`/progresses/${id}`);
+      alert("Deleted");
+      getChartByID();
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -89,7 +105,7 @@ const ChartDetail = () => {
         if (pv.progress_id === p.progress_id) {
           return {
             ...p,
-            [type]: newVal,
+            [type]: type == "progress_value" ? Number(newVal) : newVal,
             ...(type === "progress_no" && {
               range_value: rangeMapping?.[rawChartData?.range_type]?.find(
                 (r: Range) => r?.value === newVal
@@ -107,7 +123,7 @@ const ChartDetail = () => {
             if (ev.progress_id === p.progress_id) {
               return {
                 ...ev,
-                [type]: newVal,
+                [type]: type == "progress_value" ? Number(newVal) : newVal,
                 ...(type === "progress_no" && {
                   range_value: rangeMapping?.[rawChartData?.range_type]?.find(
                     (r: Range) => r?.value === newVal
@@ -122,7 +138,7 @@ const ChartDetail = () => {
             ...editedValues,
             {
               progress_id: p.progress_id,
-              [type]: newVal,
+              [type]: type == "progress_value" ? Number(newVal) : newVal,
               ...(type === "progress_no" && {
                 range_value: rangeMapping?.[rawChartData?.range_type]?.find(
                   (r: Range) => r?.value === newVal
@@ -134,8 +150,10 @@ const ChartDetail = () => {
   }
 
   return (
-    <div className="px-2 py-5 sm:px-5">
+    <div className="px-2 pb-8 sm:px-8">
+      <Navbar />
       <DynamicChart
+        editable={false}
         chartType={rawChartData?.chart_type}
         barChartType={rawChartData?.bar_chart_type}
         key={rawChartData?.chart_id}
@@ -148,63 +166,84 @@ const ChartDetail = () => {
         categoryNames={[rawChartData?.progress_name]}
         chartId={rawChartData?.chart_id}
       />
-      <h3 className="mt-8 mb-6 text-xl">Edit Your Progress</h3>
-      <section className="mt-5 flex flex-col items-center sm:grid sm:grid-cols-2 place-items-center gap-3">
-        {progressValues?.map((p: any) => {
-          return (
-            <div className="flex gap-x-3 w-full" key={p.progress_id}>
-              <span className="flex w-full flex-col gap-y-2">
-                <Label className="capitalize">
-                  {rawChartData?.range_type.replace("ly", "")}
-                </Label>
-                <Select
-                  onValueChange={(val: number) => {
-                    updateProgress(val, "progress_no", p);
-                    setIsEdited(true);
-                  }}
-                  value={p?.progress_no}
-                >
-                  <SelectTrigger className="">
-                    <SelectValue placeholder="Select range value" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableRanges?.map((r: any) => (
-                      <SelectItem
-                        className="capitalize"
-                        key={r.value}
-                        value={r.value}
-                      >
-                        {r.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </span>
-              <span className="flex w-full flex-col gap-y-2">
-                <Label>Progress Value</Label>
-                <div className="flex gap-x-2">
-                  <Input
-                    type="number"
-                    value={p.progress_value}
-                    onChange={(e) => {
-                      updateProgress(e.target.value, "progress_value", p);
+
+      {progressValues?.length > 0 && (
+        <h3 className="mt-8 mb-6 text-xl">Edit Your Progress</h3>
+      )}
+      {progressValues?.length > 0 ? (
+        <section className="mt-5 flex flex-col items-center sm:grid sm:grid-cols-2 place-items-center gap-3">
+          {progressValues?.map((p: any) => {
+            return (
+              <div
+                className="flex items-center gap-x-3 w-full p-3 hover:bg-slate-100 rounded-lg"
+                key={p.progress_id}
+              >
+                <span className="flex w-full flex-col gap-y-2">
+                  <Label className="capitalize">
+                    {rawChartData?.range_type.replace("ly", "")}
+                  </Label>
+                  <Select
+                    onValueChange={(val: number) => {
+                      updateProgress(val, "progress_no", p);
                       setIsEdited(true);
                     }}
-                  />
+                    value={p?.progress_no}
+                  >
+                    <SelectTrigger className="">
+                      <SelectValue placeholder="Select range value" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableRanges?.map((r: any) => (
+                        <SelectItem
+                          className="capitalize"
+                          key={r.value}
+                          value={r.value}
+                        >
+                          {r.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </span>
+                <span className="flex w-full flex-col gap-y-2">
+                  <Label>Progress Value</Label>
+                  <div className="flex gap-x-2">
+                    <Input
+                      type="text"
+                      pattern="[0-9]*"
+                      value={p.progress_value}
+                      onChange={(e) => {
+                        updateProgress(e.target.value, "progress_value", p);
+                        setIsEdited(true);
+                      }}
+                    />
+                  </div>
+                </span>
+                <div
+                  role="button"
+                  onClick={() => deleteProgress(p.progress_id)}
+                  className="cursor-pointer flex-shrink-0 p-2 rounded-full bg-slate-300 hover:opacity-70"
+                >
+                  <TrashIcon size={13} />
                 </div>
-              </span>
-            </div>
-          );
-        })}
-        <Button
-          className="mt-3 col-span-2 sm:max-w-sm w-full"
-          size="sm"
-          disabled={!isEdited}
-          onClick={patchProgresses}
-        >
-          Update Progress
-        </Button>
-      </section>
+              </div>
+            );
+          })}
+
+          <Button
+            className="mt-3 col-span-2 sm:max-w-sm w-full"
+            size="sm"
+            disabled={!isEdited}
+            onClick={patchProgresses}
+          >
+            Update Progress
+          </Button>
+        </section>
+      ) : (
+        <p className="text-center mt-10">
+          Your chart has no progress. Add more to see your chart.
+        </p>
+      )}
     </div>
   );
 };

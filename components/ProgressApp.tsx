@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import DynamicChart from "@/components/DynamicChart";
 import { InputWithText } from "@/components/InputWithText";
-import { AreaChart, Card, Grid } from "@tremor/react";
+import { Grid } from "@tremor/react";
 import {
   Select,
   SelectContent,
@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Plus, RotateCcw } from "lucide-react";
 import { ChartData, ChartColorOptions, Range } from "@/types/chart";
-import { MONTHS, rangeMapping, WEEKS, YEARS } from "@/data/time";
+import { rangeMapping, WEEKS, YEARS } from "@/data/time";
 import { api } from "@/lib/axios";
 import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
 import { useTypedSelector } from "@/store/store";
@@ -57,6 +57,7 @@ const ProgressApp = () => {
       });
       getUserCharts();
       resetNewChart();
+      setIsChartFormOpen(false);
     } catch (error) {
       alert(error);
     }
@@ -135,23 +136,6 @@ const ProgressApp = () => {
     <div className="w-full grid gap-5">
       {isChartFormOpen && (
         <Grid className="gap-3 sm:gap-5" numCols={1} numColsLg={2}>
-          {(chartName || selectedRange) && (
-            <div className="shadow-xl">
-              <div className="flex justify-center">
-                <p className="text-lg font-semibold mb-2">New Chart Preview</p>
-              </div>
-              <DynamicChart
-                colors={selectedColors}
-                categoryNames={[chartName]}
-                chartdata={chartData}
-                idx={selectedRange}
-                maxValue={maxValue}
-                chartType={chartType}
-                barChartType={barChartType}
-                className="shadow-none border-none p-3"
-              />
-            </div>
-          )}
           <section className="grid gap-3 sm:gap-5 border border-gray-300 shadow-xl p-6 rounded-xl ">
             <h4 className="text-2xl mb-2">Add New Chart</h4>
             <div className="flex justify-between items-center">
@@ -299,8 +283,27 @@ const ProgressApp = () => {
               Save Chart
             </Button>
           </section>
+          {(chartName || selectedRange) && (
+            <div className="shadow-xl rounded-xl border pt-6 border-gray-300">
+              <div className="flex justify-center">
+                <p className="text-lg font-semibold mb-2">New Chart Preview</p>
+              </div>
+              <DynamicChart
+                editable={false}
+                colors={selectedColors}
+                categoryNames={[chartName]}
+                chartdata={chartData}
+                idx={selectedRange}
+                maxValue={maxValue}
+                chartType={chartType}
+                barChartType={barChartType}
+                wrapperClassName="shadow-none ring-0 rounded-xl"
+              />
+            </div>
+          )}
         </Grid>
       )}
+
       {!isChartFormOpen && (
         <section className="h-[200px] w-full flex justify-center items-center">
           <Button
@@ -318,6 +321,7 @@ const ProgressApp = () => {
         {userCharts?.map((chart: any, idx: number) => {
           return (
             <DynamicChart
+              editable
               chartType={userRawCharts[idx].chart_type}
               barChartType={userRawCharts[idx].bar_chart_type}
               key={userRawCharts[idx].chart_id}
