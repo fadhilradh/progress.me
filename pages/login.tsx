@@ -28,8 +28,9 @@ const Login = () => {
       reset();
       dispatch(login(userData.data));
       // router.replace("/");
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      // @ts-ignore
       setError({ message: error.response.data.message });
     } finally {
       setIsLoading(false);
