@@ -76,10 +76,6 @@ const ChartDetail = () => {
     }
   }
 
-  // React.useEffect(() => {
-  //   setavailableRanges(rangeMapping?.[rawChartData?.range_type]);
-  // }, [rawChartData?.range_type]);
-
   React.useEffect(() => {
     setavailableRanges(
       rangeMapping?.[rawChartData?.range_type]?.filter(
@@ -87,13 +83,6 @@ const ChartDetail = () => {
       )
     );
   }, [selectedRanges?.length, rawChartData?.range_type]);
-
-  React.useEffect(() => {
-    console.log(
-      "🚀 ~ file: [id].tsx:14 ~ editedValues ~ editedValues:",
-      editedValues
-    );
-  }, [editedValues]);
 
   React.useEffect(() => {
     if (id) getChartByID();

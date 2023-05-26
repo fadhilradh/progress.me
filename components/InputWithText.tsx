@@ -33,6 +33,7 @@ export function InputWithText({
       </Label>
       <Input
         value={value}
+        // @ts-ignore
         onChange={(e) => onChange(e.target.value)}
         type={type}
         id={String(label)}
