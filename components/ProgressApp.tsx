@@ -160,6 +160,7 @@ const ProgressApp = () => {
             <section className="flex sm:flex-row flex-col gap-5 sm:gap-0 justify-between">
               <div className="grid w-full items-center gap-2 ">
                 <Label>Chart Type</Label>
+                {/* @ts-ignore */}
                 <Select onValueChange={setChartType} value={chartType}>
                   <SelectTrigger className="w-[250px]">
                     <SelectValue placeholder="Select chart type" />
