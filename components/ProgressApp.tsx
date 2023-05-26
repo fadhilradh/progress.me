@@ -175,6 +175,7 @@ const ProgressApp = () => {
               {chartType == "bar" && (
                 <div className="grid w-full items-center gap-2 ">
                   <Label>Bar Chart Layout</Label>
+                  {/* @ts-ignore */}
                   <Select onValueChange={setBarChartType} value={barChartType}>
                     <SelectTrigger className="w-[250px]">
                       <SelectValue placeholder="Select bar chart layout" />
