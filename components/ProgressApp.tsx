@@ -211,6 +211,7 @@ const ProgressApp = () => {
               <div className="grid w-full items-center gap-2 ">
                 <Label>Chart Color</Label>
                 <Select
+                  // @ts-ignore
                   onValueChange={(e) => setChartColor([e])}
                   value={selectedColors[0]}
                 >
