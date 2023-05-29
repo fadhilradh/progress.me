@@ -157,12 +157,14 @@ const ChartDetail = () => {
         chartId={rawChartData?.chart_id}
       />
 
-      <h3 className="mt-8 mb-6 text-xl">Edit Your Chart</h3>
-
-      <EditChart chartData={rawChartData} />
+      <EditChart
+        chartData={rawChartData}
+        getChart={getChartByID}
+        chartId={id as UUID}
+      />
 
       {progressValues?.length > 0 && (
-        <h3 className="mt-8 mb-6 text-xl">Edit Your Progress</h3>
+        <h3 className="mt-8 mb-6 text-xl pl-4">Edit Your Progress</h3>
       )}
       {progressValues?.length > 0 ? (
         <section className="mt-5 flex flex-col items-center sm:grid sm:grid-cols-2 place-items-center gap-3">
