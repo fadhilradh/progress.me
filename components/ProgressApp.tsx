@@ -270,6 +270,7 @@ const ProgressApp = () => {
               </section>
             )}
             <Button
+              className="mt-3"
               disabled={!progressValue || !chartName || !selectedRange}
               variant="subtle"
               onClick={addProgress}
@@ -277,6 +278,7 @@ const ProgressApp = () => {
               Add Progress
             </Button>
             <Button
+              className="-mt-2"
               disabled={chartData?.length < 2}
               variant="outline"
               onClick={addChart}
@@ -321,7 +323,7 @@ const ProgressApp = () => {
         </section>
       )}
       {userCharts.length > 0 && (
-        <h2 className="text-center text-xl">Your Progress Charts :</h2>
+        <h2 className="text-center text-xl mt-8">Your Progress Charts :</h2>
       )}
       <Grid className="gap-5" numCols={1} numColsLg={2}>
         {userCharts?.map((chart: any, idx: number) => {
