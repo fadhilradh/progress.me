@@ -1,4 +1,5 @@
 import DynamicChart from "@/components/DynamicChart";
+import EditChart from "@/components/EditChart";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +17,7 @@ import { serializeChartRes } from "@/lib/utils";
 import { ProgressData } from "@/types/api";
 import { Range } from "@/types/chart";
 import { UUID } from "crypto";
-import { CheckIcon, DeleteIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import React from "react";
 
@@ -156,6 +157,10 @@ const ChartDetail = () => {
         chartId={rawChartData?.chart_id}
       />
 
+      <h3 className="mt-8 mb-6 text-xl">Edit Your Chart</h3>
+
+      <EditChart chartData={rawChartData} />
+
       {progressValues?.length > 0 && (
         <h3 className="mt-8 mb-6 text-xl">Edit Your Progress</h3>
       )}
@@ -221,8 +226,7 @@ const ChartDetail = () => {
           })}
 
           <Button
-            className="mt-3 col-span-2 sm:max-w-sm w-full"
-            size="sm"
+            className="mt-3 col-span-2 "
             disabled={!isEdited}
             onClick={patchProgresses}
           >

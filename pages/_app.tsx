@@ -14,11 +14,13 @@ const fontSans = FontSans({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <style jsx global>{`
+      <style jsx global>
+        {`
 				:root {
 					--font-sans: ${fontSans.style.fontFamily};
 				}
-			}`}</style>
+			}`}
+      </style>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <Component {...pageProps} />
