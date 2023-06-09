@@ -60,7 +60,7 @@ const DynamicChart = ({
         maxValue: maxValue,
         layout: barChartType,
         className: "cursor-pointer " + className,
-        // yAxisWidth: 25,
+        yAxisWidth: String(maxValue).length * 6 + 25,
       })}
     </Card>
   );
