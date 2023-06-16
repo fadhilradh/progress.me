@@ -19,9 +19,8 @@ import { api } from "@/lib/axios";
 import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
 import { ChartsWithProgressResponse } from "@/types/api";
 import { chartColors } from "@/data/chart";
-import axios from "axios";
 
-const ProgressApp = () => {
+const ProgressApp = ({ userData }) => {
   const { register, setValue } = useForm(),
     [userCharts, setUserCharts] = useState<ChartData[][]>([]),
     [userRawCharts, setUserRawCharts] = useState<
@@ -41,15 +40,7 @@ const ProgressApp = () => {
     [barChartType, setBarChartType] = useState<"vertical" | "horizontal">(
       "horizontal"
     ),
-    [isChartFormOpen, setIsChartFormOpen] = useState<boolean>(false),
-    [userData, setUserData] = useState<any>(null);
-
-  async function getAuthData() {
-    try {
-      const { data } = await axios.get("/api/auth");
-      setUserData(data.userData);
-    } catch (error) {}
-  }
+    [isChartFormOpen, setIsChartFormOpen] = useState<boolean>(false);
 
   React.useEffect(() => {
     if (!userData?.userId) return;
@@ -59,10 +50,6 @@ const ProgressApp = () => {
       userData?.userId
     );
   }, [userData?.userId]);
-
-  React.useEffect(() => {
-    getAuthData();
-  }, []);
 
   function addChart() {
     try {
