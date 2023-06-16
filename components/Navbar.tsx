@@ -4,7 +4,7 @@ import React from "react";
 import { SignInButton } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 
-const Navbar = ({ userData }) => {
+const Navbar = () => {
   return (
     <nav className="flex justify-between items-center py-2 sm:py-5">
       <Link href="/">

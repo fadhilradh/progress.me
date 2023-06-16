@@ -31,7 +31,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="px-2 sm:px-10 pb-10 flex flex-col h-full gap-y-4">
-        <Navbar userData={userData} />
+        <Navbar />
         <ProgressApp userData={userData} />
       </div>
     </>

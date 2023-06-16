@@ -20,7 +20,7 @@ import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
 import { ChartsWithProgressResponse } from "@/types/api";
 import { chartColors } from "@/data/chart";
 
-const ProgressApp = ({ userData }) => {
+const ProgressApp = ({ userData }: { userData: any }) => {
   const { register, setValue } = useForm(),
     [userCharts, setUserCharts] = useState<ChartData[][]>([]),
     [userRawCharts, setUserRawCharts] = useState<
