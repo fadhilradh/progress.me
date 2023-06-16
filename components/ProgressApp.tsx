@@ -17,13 +17,12 @@ import { ChartData, ChartColorOptions, Range } from "@/types/chart";
 import { rangeMapping, WEEKS, YEARS } from "@/data/time";
 import { api } from "@/lib/axios";
 import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
-import { useTypedSelector } from "@/store/store";
 import { ChartsWithProgressResponse } from "@/types/api";
 import { chartColors } from "@/data/chart";
+import axios from "axios";
 
 const ProgressApp = () => {
   const { register, setValue } = useForm(),
-    user = useTypedSelector((state) => state.user),
     [userCharts, setUserCharts] = useState<ChartData[][]>([]),
     [userRawCharts, setUserRawCharts] = useState<
       ChartsWithProgressResponse[] | []
@@ -42,12 +41,33 @@ const ProgressApp = () => {
     [barChartType, setBarChartType] = useState<"vertical" | "horizontal">(
       "horizontal"
     ),
-    [isChartFormOpen, setIsChartFormOpen] = useState<boolean>(false);
+    [isChartFormOpen, setIsChartFormOpen] = useState<boolean>(false),
+    [userData, setUserData] = useState<any>(null);
+
+  async function getAuthData() {
+    try {
+      const { data } = await axios.get("/api/auth");
+      setUserData(data.userData);
+    } catch (error) {}
+  }
+
+  React.useEffect(() => {
+    if (!userData?.userId) return;
+    getUserCharts();
+    console.log(
+      "🚀 ~ file: ProgressApp.tsx:57 ~ ProgressApp ~ userData:",
+      userData?.userId
+    );
+  }, [userData?.userId]);
+
+  React.useEffect(() => {
+    getAuthData();
+  }, []);
 
   function addChart() {
     try {
       api.post("/chart-progresses", {
-        user_id: user.userId,
+        user_id: userData?.userId,
         progress_data: serializeProgressReq(chartData),
         progress_name: chartName,
         range_type: selectedRange,
@@ -75,7 +95,7 @@ const ProgressApp = () => {
 
   async function getUserCharts() {
     try {
-      const res = await api.get(`/chart-progresses/${user.userId}`);
+      const res = await api.get(`/chart-progresses/${userData?.userId}`);
       setUserRawCharts(res.data);
       setUserCharts(serializeProgressRes(res.data));
     } catch (e) {
@@ -94,10 +114,6 @@ const ProgressApp = () => {
       )
     );
   }, [rangeVals.length]);
-
-  React.useEffect(() => {
-    getUserCharts();
-  }, []);
 
   function addProgress() {
     const newData = {
@@ -140,7 +156,9 @@ const ProgressApp = () => {
             <div className="flex justify-between">
               <span className="mb-2">
                 <Title>Add New Chart</Title>
-                <p className="text-xs text-gray-400">Check the preview</p>
+                <p className="text-xs text-gray-400">
+                  Check the preview as you type
+                </p>
               </span>
               {isCreatingChart && (
                 <Button

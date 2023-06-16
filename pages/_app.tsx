@@ -17,10 +17,10 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <style jsx global>
         {`
-				:root {
-					--font-sans: ${fontSans.style.fontFamily};
-				}
-			}`}
+          :root {
+            --font-sans: ${fontSans.style.fontFamily};
+          }
+        `}
       </style>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
