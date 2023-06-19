@@ -1,19 +1,26 @@
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
+import React from "react";
+import { useTypedDispatch } from "@/store/store";
+import { login } from "@/store/user";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { userId } = getAuth(ctx.req);
-  console.log(
-    "🚀 ~ file: post-signup.tsx:11 ~ constgetServerSideProps:GetServerSideProps= ~ userId:",
-    userId
-  );
 
-  // Load any data your application needs for the page using the userId
-  return { props: { userId } };
+  return {
+    props: {
+      userId,
+    },
+    redirect: {
+      destination: "/",
+      permanent: false,
+    },
+  };
 };
 
-export default function PostSignin({
-  userId,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return <div>{userId}</div>;
+export default function Page({ userId }: { userId: string }) {
+  const dispatch = useTypedDispatch();
+  dispatch(login({ userId }));
+
+  return null;
 }

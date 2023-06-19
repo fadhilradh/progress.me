@@ -1,19 +1,39 @@
-import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
-import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
+import type { GetServerSideProps } from "next";
+import { getAuth } from "@clerk/nextjs/server";
+import { api } from "@/lib/axios";
+import React from "react";
+import { useTypedDispatch } from "@/store/store";
+import { login } from "@/store/user";
+
+type Repo = {
+  name: string;
+  stargazers_count: number;
+};
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { userId } = getAuth(ctx.req);
-  console.log(
-    "🚀 ~ file: post-signup.tsx:11 ~ constgetServerSideProps:GetServerSideProps= ~ userId:",
-    userId
-  );
 
-  // Load any data your application needs for the page using the userId
-  return { props: { userId } };
+  try {
+    await api.post(`/users/${userId}`);
+    console.log("User posted to DB");
+  } catch (e) {
+    console.error(e);
+  }
+
+  return {
+    props: {
+      userId,
+    },
+    redirect: {
+      destination: "/",
+      permanent: false,
+    },
+  };
 };
 
-export default function PostSignup({
-  userId,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return <div>{userId}</div>;
+export default function Page({ userId }: { userId: string }) {
+  const dispatch = useTypedDispatch();
+  dispatch(login({ userId }));
+
+  return null;
 }

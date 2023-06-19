@@ -19,8 +19,9 @@ import { api } from "@/lib/axios";
 import { serializeProgressReq, serializeProgressRes } from "@/lib/utils";
 import { ChartsWithProgressResponse } from "@/types/api";
 import { chartColors } from "@/data/chart";
+import { useTypedSelector } from "@/store/store";
 
-const ProgressApp = ({ userData }: { userData: any }) => {
+const ProgressApp = () => {
   const { register, setValue } = useForm(),
     [userCharts, setUserCharts] = useState<ChartData[][]>([]),
     [userRawCharts, setUserRawCharts] = useState<
@@ -40,21 +41,18 @@ const ProgressApp = ({ userData }: { userData: any }) => {
     [barChartType, setBarChartType] = useState<"vertical" | "horizontal">(
       "horizontal"
     ),
-    [isChartFormOpen, setIsChartFormOpen] = useState<boolean>(false);
+    [isChartFormOpen, setIsChartFormOpen] = useState<boolean>(false),
+    userId = useTypedSelector((state) => state.user.userId);
 
   React.useEffect(() => {
-    if (!userData?.userId) return;
+    if (!userId) return;
     getUserCharts();
-    console.log(
-      "🚀 ~ file: ProgressApp.tsx:57 ~ ProgressApp ~ userData:",
-      userData?.userId
-    );
-  }, [userData?.userId]);
+  }, [userId]);
 
   function addChart() {
     try {
       api.post("/chart-progresses", {
-        user_id: userData?.userId,
+        user_id: userId,
         progress_data: serializeProgressReq(chartData),
         progress_name: chartName,
         range_type: selectedRange,
@@ -62,11 +60,13 @@ const ProgressApp = ({ userData }: { userData: any }) => {
         // TODO-not priority: support multiple colors and lines
         chart_color: selectedColors[0],
       });
-      getUserCharts();
       resetNewChart();
       setIsChartFormOpen(false);
-    } catch (error) {
-      alert(error);
+      setTimeout(() => {
+        getUserCharts();
+      }, 1000);
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -82,7 +82,7 @@ const ProgressApp = ({ userData }: { userData: any }) => {
 
   async function getUserCharts() {
     try {
-      const res = await api.get(`/chart-progresses/${userData?.userId}`);
+      const res = await api.get(`/chart-progresses/${userId}`);
       setUserRawCharts(res.data);
       setUserCharts(serializeProgressRes(res.data));
     } catch (e) {

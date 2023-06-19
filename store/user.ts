@@ -17,12 +17,21 @@ export const userSlice = createSlice({
     // need {payload} to get the data from the action!!
     login: (
       state,
-      { payload: { role, username, id, accessToken, photo_profile_url, email } }
+      {
+        payload: {
+          role,
+          username,
+          userId,
+          accessToken,
+          photo_profile_url,
+          email,
+        },
+      }
     ) => {
       state.isLoggedIn = true;
       state.role = role;
       state.username = username;
-      state.userId = id;
+      state.userId = userId;
       state.accessToken = accessToken;
       state.profilePic = photo_profile_url;
       state.email = email;
