@@ -1,7 +1,6 @@
 import { useUser } from "@clerk/nextjs";
 import { api } from "@/lib/axios";
 import { useTypedDispatch } from "@/store/store";
-import { login } from "@/store/user";
 import { useRouter } from "next/router";
 import React from "react";
 
