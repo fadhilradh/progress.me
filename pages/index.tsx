@@ -15,7 +15,7 @@ const Landing: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="min-h-screen h-full p-2 flex flex-col bg-gradient-to-br from-sky-300 via-blue-500 to-blue-800">
+      <div className="min-h-screen h-full p-2 md:p-24 flex flex-col bg-gradient-to-br from-sky-300 via-blue-500 to-blue-800">
 
         <div className="flex flex-col items-center justify-center flex-grow text-center px-4">
           <h1 className="text-white text-5xl font-extrabold mb-6 drop-shadow-xl">
