@@ -21,7 +21,7 @@ import { ChartsWithProgressResponse } from "@/types/api";
 import { chartColors } from "@/data/chart";
 import { useTypedSelector } from "@/store/store";
 
-const ProgressApp = () => {
+const ProgressApp = ({ userData }: { userData: any }) => {
   const { register, setValue } = useForm(),
     [userCharts, setUserCharts] = useState<ChartData[][]>([]),
     [userRawCharts, setUserRawCharts] = useState<
