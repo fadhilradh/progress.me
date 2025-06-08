@@ -7,8 +7,8 @@ import { Button } from "./ui/button";
 const Navbar = () => {
   return (
     <nav className="flex justify-between items-center py-2 sm:py-5">
-      <Link href="/">
-        <h1 className="text-3xl font-bold">↗ progress.me</h1>
+      <Link href="/app">
+        <h1 className="text-3xl font-bold text-blue-600 drop-shadow-lg">↗ Progress Hub</h1>
       </Link>
       <SignedIn>
         <UserButton afterSignOutUrl="/" />

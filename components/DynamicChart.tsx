@@ -1,5 +1,5 @@
 import { ChartData } from "@/types/chart";
-import { Card, AreaChart, BarChart, LineChart } from "@tremor/react";
+import { Card, AreaChart, BarChart, LineChart, Button } from "@tremor/react";
 import { UUID } from "crypto";
 import { EditIcon } from "lucide-react";
 import Link from "next/link";
@@ -46,11 +46,7 @@ const DynamicChart = ({
     <Card
       className={`shadow-xl rounded-xl p-4 sm:p-6 cursor-pointer flex flex-col items-end ${wrapperClassName}`}
     >
-      {editable && (
-        <Link href={`/charts/${chartId}`}>
-          <EditIcon color="gray" />
-        </Link>
-      )}
+      
       {React.createElement(chartTypeMapping[chartType], {
         data: chartdata,
         index: idx,
@@ -62,6 +58,13 @@ const DynamicChart = ({
         className: "cursor-pointer " + className,
         yAxisWidth: String(maxValue).length * 6 + 25,
       })}
+      {editable && (
+        <Button>
+          <Link href={`/charts/${chartId}`}>
+            Edit
+          </Link>
+        </Button>
+      )}
     </Card>
   );
 };

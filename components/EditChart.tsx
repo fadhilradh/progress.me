@@ -25,6 +25,7 @@ import { chartColors } from "@/data/chart";
 import { ChartColorOptions } from "@/types/chart";
 import { api } from "@/lib/axios";
 import { UUID } from "crypto";
+import { useToast } from "./ui/use-toast";
 
 const formSchema = z.object({
   progress_name: z.string().min(2).max(50),
@@ -48,6 +49,8 @@ export function EditChart({ chartData, getChart, chartId }: IEditChartProps) {
     },
   });
 
+  const {toast} = useToast();
+
   React.useEffect(() => {
     form.reset({
       progress_name: chartData?.progress_name,
@@ -62,7 +65,10 @@ export function EditChart({ chartData, getChart, chartId }: IEditChartProps) {
       await api.patch(`/charts/${chartId}`, {
         ...values,
       });
-      alert("Updated");
+      toast({
+        title: "Chart edited successfully",
+        variant: "default",
+      });
       getChart();
     } catch (e) {
       console.error(e);

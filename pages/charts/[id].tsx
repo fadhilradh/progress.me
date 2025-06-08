@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
 import { rangeMapping } from "@/data/time";
 import { api } from "@/lib/axios";
 import { serializeChartRes } from "@/lib/utils";
@@ -32,7 +33,7 @@ const ChartDetail = () => {
     [editedValues, setEditedValues] = React.useState<any>([]),
     [availableRanges, setavailableRanges] = React.useState<any>(null),
     [selectedRanges, setSelectedRanges] = React.useState<any>(null),
-    [isAddingProgress, setIsAddingProgress] = React.useState<boolean>(false);
+    {toast} = useToast()
 
   async function getChartByID() {
     try {
@@ -57,8 +58,10 @@ const ChartDetail = () => {
       await api.patch("/progresses", {
         progresses: editedValues,
       });
-      alert("Updated");
-      getChartByID();
+      toast({
+        title: "Progress updated successfully",
+        variant: "default",
+      });      getChartByID();
     } catch (e) {
       console.error(e);
     } finally {
@@ -70,7 +73,10 @@ const ChartDetail = () => {
   async function deleteProgress(id: UUID) {
     try {
       await api.delete(`/progresses/${id}`);
-      alert("Deleted");
+      toast({
+        title: "Progress deleted successfully",
+        variant: "default",
+      });
       getChartByID();
     } catch (e) {
       console.error(e);
